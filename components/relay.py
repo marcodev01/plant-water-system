@@ -1,20 +1,19 @@
 from grove.gpio import GPIO
 
 
-class Relay(GPIO): 
-    """
+class Relay(GPIO):
+    """ # noqa: E501
     Relay class for:
         Relay (https://wiki.seeedstudio.com/Grove-Relay/)
         2-Channel SPDT Relay (https://wiki.seeedstudio.com/Grove-2-Channel_SPDT_Relay/)
 
     -- A relay is an electrically operated switch --
-    
+
     Args:
         pin(int): number of digital pin the relay connected
     """
     def __init__(self, pin):
-        super().__init__(pin, GPIO.OUT)
-
+        super(Relay, self).__init__(pin, GPIO.OUT)
 
     def on(self):
         """ switch on electric circuit """

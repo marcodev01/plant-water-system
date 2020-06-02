@@ -3,11 +3,10 @@ import enum
 
 
 class MoistureSensor:
-    """
+    """ # noqa: E501
     Moisture Sensor class for:
         Moisture Sensor (https://wiki.seeedstudio.com/Grove-Moisture_Sensor/)
         Capacitive Moisture Sensor (https://wiki.seeedstudio.com/Grove-Capacitive_Moisture_Sensor-Corrosion-Resistant/)
-
     Args:
         channel(int): number of analog pin/channel the sensor connected.
         sensor_type(MoistureSensorType): enum of MoistureSensorType indicating its type
@@ -15,11 +14,15 @@ class MoistureSensor:
     def __init__(self, channel, sensor_type):
         self.channel = channel
         self.sensor_type = sensor_type
-        # Analog to Digital Converter (ADC) - external chip unit on grove pi hat
+        # Analog to Digital Converter (ADC) - external chip unit on grove pi hat  # noqa: E501
         self.adc = ADC()
 
     @property
-    def moisture(self):
+    def sensor_type(self):
+        """Get moisture sensor type - either STANDARD (1) or CAPACITIVE (2)"""
+        return self.sensor_type
+
+    def readMoisture(self):
         """
         Get the moisture strength value/voltage
 
@@ -42,11 +45,7 @@ class MoistureSensor:
         """
         value = self.adc.read_voltage(self.channel)
         return value
-    
-    @property
-    def sensor_type(self):
-        """Get moisture sensor type - either STANDARD (1) or CAPACITIVE (2)"""
-        return self.sensor_type
+
 
     def isDry(self):
         pass
@@ -56,7 +55,6 @@ class MoistureSensor:
 
     def isOverWater(self):
         pass
-
 
 
 class MoistureSensorType(enum.Enum):
