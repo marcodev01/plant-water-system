@@ -4,6 +4,7 @@ import enum
 
 class MoistureSensor:
     """ # noqa: E501
+    [Analog] 
     Moisture Sensor class for:
         Moisture Sensor (https://wiki.seeedstudio.com/Grove-Moisture_Sensor/)
         Capacitive Moisture Sensor (https://wiki.seeedstudio.com/Grove-Capacitive_Moisture_Sensor-Corrosion-Resistant/)
@@ -47,16 +48,6 @@ class MoistureSensor:
         return value
 
 
-    def isDry(self):
-        pass
-
-    def isHumid(self):
-        pass
-
-    def isOverWater(self):
-        pass
-
-
 class MoistureSensorType(enum.Enum):
-    STANDARD = 1
-    CAPACITIVE = 2
+    STANDARD = '1'
+    CAPACITIVE = '2'
