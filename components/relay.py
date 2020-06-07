@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 from grove.gpio import GPIO
 
 
 class Relay(GPIO):
     """ # noqa: E501
-    [Digital] 
+    [Digital]
     Relay class for:
         Relay (https://wiki.seeedstudio.com/Grove-Relay/)
         2-Channel SPDT Relay (https://wiki.seeedstudio.com/Grove-2-Channel_SPDT_Relay/)

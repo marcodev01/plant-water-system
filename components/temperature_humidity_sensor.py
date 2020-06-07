@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import seeed_dht
 import enum
 
 
 class TemperatureHumiditySensor:
     """ # noqa: E501
-    [Digital] 
+    [Digital]
     Temperature and Humidity Sensor class for:
         Temperature&Humidity Sensor Pro [DHT22] (https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/)
         Temperature&Humidity Sensor [DHT11] (https://wiki.seeedstudio.com/Grove-TemperatureAndHumidity_Sensor/)
@@ -20,16 +22,15 @@ class TemperatureHumiditySensor:
     def dht_sensor_type(self):
         return self.dht_sensor.dht_type
 
-    def readTemperature(self):
+    def read_temperature(self):
         """Read temperature in degrees [Celsuis]"""
         temp = self.dht_sensor.read()[1]
         return temp
 
-    def readHumidity(self):
+    def read_humidity(self):
         """Read humidity in %"""
         humi = self.dht_sensor.read()[0]
         return humi
-
 
 
 class TempHumSensorType(enum.Enum):
