@@ -5,7 +5,7 @@ import enum
 
 
 class MoistureSensor:
-    """ # noqa: E501
+    """
     [Analog]
     Moisture Sensor class for:
         Moisture Sensor (https://wiki.seeedstudio.com/Grove-Moisture_Sensor/)
@@ -14,10 +14,11 @@ class MoistureSensor:
         channel(int): number of analog pin/channel the sensor connected.
         sensor_type(MoistureSensorType): enum of MoistureSensorType indicating its type
     """
+
     def __init__(self, channel, sensor_type):
         self.channel = channel
         self.sen_type = sensor_type
-        # Analog to Digital Converter (ADC) - external chip unit on grove pi hat  # noqa: E501
+        # Analog to Digital Converter (ADC) - external chip unit on grove pi hat
         self.adc = ADC()
 
     @property
@@ -29,25 +30,28 @@ class MoistureSensor:
         """
         Get the moisture strength value/voltage
 
-        Moisture Sensor:
-        Min  Max  Condition
-        0    0    open air
-        0    300  dry soil
-        300  700  humid soil
-        700  950  water
-
-        Capacitive Moisture Sensor: todo!!!!
-        Min  Max  Condition
-        0    0    open air
-        0    300  dry soil
-        300  700  humid soil
-        700  950  water
+        voltage, in mV [millivolt = 0.001 V]
+        Moisture Sensor - Min: 0   Max: 1500
+        Capacitive Moisture Sensor - Min: 2000   Max: 1450 / 1250 (Water)
 
         Returns:
-            (int): voltage, in mV [millivolt = 0.001 V]
+            (int): mosture in %
         """
+
+        min_moisture = 1000 if self.sen_type == MoistureSensorType.STANDARD else 2020
+        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD else 1480
+        
+
         value = self.adc.read_voltage(self.channel)
-        return value
+        print('RAW VALUE: ', value)
+
+        return self.__convert_moisture_voltage_to_percent(min_moisture, max_moisture, value)
+
+    def __convert_moisture_voltage_to_percent(self, min_val, max_val, val):
+        max_absolute =  max_val if min_val < max_val else abs(max_val - min_val)
+        val_absolute =  val - min_val if min_val < max_val else min_val - val
+        
+        return round((val_absolute / max_absolute) * 100)
 
 
 class MoistureSensorType(enum.Enum):

@@ -39,7 +39,7 @@ class MifloraSensor:
 
     def get_name(self):
         return self.poller.name()
-        
+
     def get_battery_level(self):
         """in %"""
         return self.poller.parameter_value(MI_BATTERY)

@@ -4,7 +4,7 @@ from grove.gpio import GPIO
 
 
 class Relay(GPIO):
-    """ # noqa: E501
+    """
     [Digital]
     Relay class for:
         Relay (https://wiki.seeedstudio.com/Grove-Relay/)

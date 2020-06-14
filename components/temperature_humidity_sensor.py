@@ -5,7 +5,7 @@ import enum
 
 
 class TemperatureHumiditySensor:
-    """ # noqa: E501
+    """
     [Digital]
     Temperature and Humidity Sensor class for:
         Temperature&Humidity Sensor Pro [DHT22] (https://wiki.seeedstudio.com/Grove-Temperature_and_Humidity_Sensor_Pro/)
