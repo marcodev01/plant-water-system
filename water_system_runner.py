@@ -6,39 +6,37 @@ from components import Relay
 from components import TemperatureHumiditySensor, TempHumSensorType
 from components import MoistureSensor, MoistureSensorType
 from components import MifloraSensor
+from tinydb import TinyDB, Query
+from datetime import datetime
 
+# components initzialisation
 relay = Relay(pin=5)
 temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)  # noqa: E501
 moister_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)  # noqa: E501
 moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)  # noqa: E501
 miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
-
-def query_moisture(sensor):
-    moisture = sensor.read_moisture()
-    
-    print('Moisture: ', moisture)  # todo: save to file
-
-
-def query_temperature(sensor):
-    temperature = sensor.read_temperature()
-    print('Temperature: ', temperature)  # todo: save to file
-
-
-def query_humidity(sensor):
-    humidity = sensor.read_humidity()
-    print('Humidity: ', humidity)  # todo: save to file
+db = TinyDB('database/plant_db.json')
+sensor_table = db.table('sensor_logs')
 
 
 def query_sesnor_values():
-    query_moisture(moister_standard)
-    query_moisture(moister_capacitive)
-    query_temperature(temp_sensor)
-    query_humidity(temp_sensor)
-    
-    vall = miflora_sensor.get_battery_level()
-    print('read_sunlight: ', vall)
-    
-    
+    current_datetime = datetime.now()
+    current_iso_datetime = current_datetime.isoformat(timespec='seconds')
+
+    db.insert({
+        'ts': current_iso_datetime,
+        'plants': [
+            {'name': 'Aji Lemon Drop', 'moisture': moister_standard.read_moisture()},
+            {'name': 'Peperoncino Veena', 'moisture': moister_capacitive.read_moisture()},
+            {'name': 'Jalapeno', 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(), 
+            'sunlight': miflora_sensor.sunlight(), 'temperature': miflora_sensor.read_temperature(), 
+            'batteryLevel': miflora_sensor.get_battery_level()}
+        ],
+        'temperatureGeneral': temp_sensor.read_temperature(),
+        'humidityGeneral': temp_sensor.read_humidity()
+    })
+
+
 def temp():
     MifloraSensor.scan()
 
