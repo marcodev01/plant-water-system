@@ -47,6 +47,7 @@ class MoistureSensor:
 
         return self.__convert_moisture_voltage_to_percent(min_moisture, max_moisture, value)
 
+
     def __convert_moisture_voltage_to_percent(self, min_val, max_val, val):
         max_absolute =  max_val if min_val < max_val else abs(max_val - min_val)
         val_absolute =  val - min_val if min_val < max_val else min_val - val

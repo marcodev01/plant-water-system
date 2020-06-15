@@ -24,7 +24,8 @@ moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CA
 
 # db initialisation
 db = TinyDB('database/plant_db.json')
-sensor_table = db.table('sensor_history')
+sensor_history = db.table('sensor_history')
+master_data = db.table('master_data')
 
 
 def query_sensor_values():
@@ -35,12 +36,12 @@ def query_sensor_values():
     miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
     
     # query and save values with time stamp to db
-    sensor_table.insert({
+    sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
         'plants': [
-            {'name': 'Aji Lemon Drop', 'moisture': moisture_1_percent},
-            {'name': 'Peperoncino Veena', 'moisture': moisture_2_percent},
-            {'name': 'Jalapeno', 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(),
+            {'id': 1, 'name': 'Aji Lemon Drop', 'moisture': moisture_1_percent},
+            {'id': 2, 'name': 'Peperoncino Veena', 'moisture': moisture_2_percent},
+            {'id': 3, 'name': 'Jalapeno', 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(),
              'sunlight': miflora_sensor.read_sunlight(), 'temperature': miflora_sensor.read_temperature(),
              'batteryLevel': miflora_sensor.get_battery_level()}
         ],
@@ -48,6 +49,12 @@ def query_sensor_values():
         'humidityGeneral': temp_sensor.read_humidity()
     })
     logging.info('Sensor values successfully persistet in db')
+
+
+def check_water_level():
+    current_date_time = datetime.now()
+    # TODO sensor_history.search(ts.test(lambda timeStamp: datetime.fromisoformat(timeStamp)))
+
 
 
 def job_state_listener(event):
