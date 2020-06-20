@@ -8,7 +8,6 @@ class Relay(GPIO):
     [Digital]
     Relay class for:
         Relay (https://wiki.seeedstudio.com/Grove-Relay/)
-        2-Channel SPDT Relay (https://wiki.seeedstudio.com/Grove-2-Channel_SPDT_Relay/)
 
     -- A relay is an electrically operated switch --
 

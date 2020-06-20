@@ -17,7 +17,6 @@ logging.basicConfig(filename='database/water_system.log',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 
 # initialisation of sensor components
-relay = Relay(pin=5)
 temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
 moister_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)
 moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
@@ -31,10 +30,10 @@ master_data = db.table('master_data')
 def query_sensor_values():
     moisture_1_percent = moister_standard.read_moisture() / moister_standard.
     moisture_2_percent = moister_capacitive.read_moisture()
-    
+
     # to poll data from miflora sensor a new object has to be created for each poll
     miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
-    
+
     # query and save values with time stamp to db
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
@@ -52,9 +51,28 @@ def query_sensor_values():
 
 
 def check_water_level():
-    current_date_time = datetime.now()
-    # TODO sensor_history.search(ts.test(lambda timeStamp: datetime.fromisoformat(timeStamp)))
+    latest_data = find_latest_entry()
+    for plant in latest_data.plants:
+        # get master data for plant.id
+        if plant.moisture < 30:
+            run_water_pump()
 
+
+def run_water_pump():
+    relay = Relay(pin=5)
+    relay.on()
+    sleep(4)
+    relay.off()
+
+
+def find_latest_entry():
+    lastest_entry = None
+    for entry in sensor_history:
+        if lastest_entry == None:
+            lastest_entry = entry
+        else if datetime.fromisoformat(entry.ts) > datetime.fromisoformat(last_entry.ts):
+            lastest_entry = entry
+    return lastest_entry
 
 
 def job_state_listener(event):
