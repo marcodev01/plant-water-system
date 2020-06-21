@@ -43,7 +43,6 @@ class MoistureSensor:
         
 
         value = self.adc.read_voltage(self.channel)
-        print('RAW VALUE: ', value)
 
         return self.__convert_moisture_voltage_to_percent(min_moisture, max_moisture, value)
 

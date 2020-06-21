@@ -1,0 +1,5 @@
+{
+   "1": { "sensor_type": "mositure_standard", "relay_pin": 22, "max_moisture": 1000, "min_moisture": 500 },
+   "2": { "sensor_type": "mositure_capacitve", "relay_pin": 23, "max_moisture": 1000, "min_moisture": 10 },
+   "3": { "sensor_type": "miflora", "relay_pin": 5, "max_moisture": 900, "min_moisture": 50, "max_conductivity": 900, "min_conductivity": 800 }
+}
