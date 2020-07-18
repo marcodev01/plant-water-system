@@ -43,9 +43,9 @@ def query_sensor_values():
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
         'plants': [
-            {'id': '1', 'name': 'Aji Lemon Drop', 'moisture': moisture_1_percent},
-            {'id': '2', 'name': 'Peperoncino Veena', 'moisture': moisture_2_percent},
-            {'id': '3', 'name': 'Jalapeno', 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(),
+            {'id': '1', 'name': master_data['1']['plant'], 'moisture': moisture_1_percent},
+            {'id': '2', 'name': master_data['2']['plant'], 'moisture': moisture_2_percent},
+            {'id': '3', 'name': master_data['3']['plant'], 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(),
              'sunlight': miflora_sensor.read_sunlight(), 'temperature': miflora_sensor.read_temperature(),
              'batteryLevel': miflora_sensor.get_battery_level()}
         ],
@@ -104,9 +104,11 @@ def find_latest_entry():
 
 
 def run_water_pump(pin):
+    pump_run_time_sec = 4
+
     relay = Relay(pin)
     relay.on()
-    time.sleep(4)
+    time.sleep(pump_run_time_sec)
     relay.off()
 
 
