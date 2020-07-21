@@ -31,15 +31,15 @@ class MoistureSensor:
         Get the moisture strength value/voltage
 
         voltage, in mV [millivolt = 0.001 V]
-        Moisture Sensor - Min: 0   Max: 1500
-        Capacitive Moisture Sensor - Min: 2000   Max: 1450 / 1250 (Water)
+        Moisture Sensor - Min: 0   Max: 1800
+        Capacitive Moisture Sensor - Min: 2020   Max: 1300
 
         Returns:
             (int): mosture in %
         """
 
-        min_moisture = 1000 if self.sen_type == MoistureSensorType.STANDARD else 2020
-        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD else 1480
+        min_moisture = 0 if self.sen_type == MoistureSensorType.STANDARD else 2020
+        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD else 1300
         
 
         value = self.adc.read_voltage(self.channel)
@@ -51,7 +51,15 @@ class MoistureSensor:
         max_absolute =  max_val if min_val < max_val else abs(max_val - min_val)
         val_absolute =  val - min_val if min_val < max_val else min_val - val
         
-        return round((val_absolute / max_absolute) * 100)
+        result = round((val_absolute / max_absolute) * 100)
+        
+        # compensate tolerances
+        if result < 0:
+            result = 0
+        elif result > 100:
+            result = 100
+        
+        return result
 
 
 class MoistureSensorType(enum.Enum):

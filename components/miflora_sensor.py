@@ -53,11 +53,11 @@ class MifloraSensor:
         return self.poller.parameter_value(MI_MOISTURE)
 
     def read_sunlight(self):
-        """in ??"""
+        """Read light intesity in lux"""
         return self.poller.parameter_value(MI_LIGHT)
 
     def read_conductivity(self):
-        """in cm"""
+        """in Mikrosiemens (µS/cm) - Fertility (Fruchtbarkeit) / Bodenleitfähigkeit"""
         return self.poller.parameter_value(MI_CONDUCTIVITY)
 
     @staticmethod

@@ -48,6 +48,8 @@ def read_moisture_stand():
     while True:
         print("Moisture type: ", moister_stand.sensor_type)
         print("Moisture val: ", moister_stand.read_moisture())
+        print("Moisture type: ", moisture_cap.sensor_type)
+        print("Moisture val: ", moisture_cap.read_moisture())
         time.sleep(1)
 
 
@@ -69,4 +71,7 @@ def read_miflora():
 
 # test_relay()
 # two_channel_relay()
-off_channel_relay()
+# off_channel_relay()
+read_moisture_stand()
+# read_moisture_cap()
+# read_miflora()

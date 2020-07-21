@@ -20,8 +20,8 @@ logging.basicConfig(filename='database/water_system.log',
 
 # initialisation of sensor components
 temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-moister_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)
-moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
+moister_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
+moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
 
 # db initialisation
 db = TinyDB('database/plant_db.json')
@@ -35,11 +35,11 @@ with open('database/master_data.json') as data_file:
 def query_sensor_values():
     moisture_1_percent = moister_standard.read_moisture()
     moisture_2_percent = moister_capacitive.read_moisture()
-
+    
     # to poll data from miflora sensor a new object has to be created for each poll
     miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
 
-    # query and save values with time stamp to db
+    # query and save values with time stamp to db - TODO: dynamic!!
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
         'plants': [
@@ -63,18 +63,19 @@ def run_water_check():
 
 
 def check_moisture_level(plant):
-    max_moisture = master_data[plant['id']]['max_moisture']
-    min_moisture = master_data[plant['id']]['min_moisture']
+    if 'max_moisture' in master_data[plant['id']]: 
+        max_moisture = master_data[plant['id']]['max_moisture']
+        min_moisture = master_data[plant['id']]['min_moisture']
 
-    if plant['moisture'] > max_moisture:
-        plant_name = plant['name']
-        plant_id = plant ['id']
-        logging.warning(f'Moisture of {plant_name} id: {plant_id} is to high!')
+        if plant['moisture'] > max_moisture:
+            plant_name = plant['name']
+            plant_id = plant ['id']
+            logging.warning(f'Moisture of {plant_name} id: {plant_id} is to high!')
 
-    if plant['moisture'] < min_moisture:
-        return True
-    else:
-        return False
+        if plant['moisture'] < min_moisture:
+            return True
+    
+    return False
 
 
 def check_conductivity_level(plant):
@@ -89,8 +90,8 @@ def check_conductivity_level(plant):
 
         if plant['conductivity'] < min_conductivity:
             return True
-    else:
-        return False
+    
+    return False
 
 
 def find_latest_entry():
