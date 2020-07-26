@@ -55,6 +55,29 @@ def query_sensor_values():
     logging.info('Sensor values successfully persistet in db')
 
 
+def createPlants(): # TODO: Test
+
+    plants = []
+    for plant_id, plant in master_data.items():
+        sensor = plant['sensor_type']
+
+        if 'conductivity' in plant and 'sunlight' in plant and 'temperature' in plant:
+            moisture = exec(f'{sensor}.read_moisture()')
+            conductivity = exec(f'{sensor}.read_conductivity()')
+            sunlight = exec(f'{sensor}.read_sunlight()')
+            temperature = exec(f'{sensor}.read_temperature()')
+            batteryLevel = exec(f'{sensor}.get_battery_level()')
+
+            plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': batteryLevel})
+        else:
+            moisture = exec(f'{sensor}.read_moisture()', {'read_moisture': MoistureSensor.read_moisture})
+
+            plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture})
+
+    return plants.sort(key=lambda p: p.id, reverse=True)
+
+
+
 def run_water_check():
     latest_data = find_latest_entry()
     for plant in latest_data['plants']:
