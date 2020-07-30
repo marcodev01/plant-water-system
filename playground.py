@@ -69,9 +69,9 @@ def read_miflora():
         time.sleep(3)
 
 
-# test_relay()
+test_relay()
 # two_channel_relay()
 # off_channel_relay()
-read_moisture_stand()
+# read_moisture_stand()
 # read_moisture_cap()
 # read_miflora()

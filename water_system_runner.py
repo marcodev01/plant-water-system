@@ -20,8 +20,8 @@ logging.basicConfig(filename='database/water_system.log',
 
 # initialisation of sensor components
 temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-moister_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
-moister_capacitive = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
+mositure_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
+mositure_capacitve = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
 
 # db initialisation
 db = TinyDB('database/plant_db.json')
@@ -33,49 +33,39 @@ with open('database/master_data.json') as data_file:
 
 
 def query_sensor_values():
-    moisture_1_percent = moister_standard.read_moisture()
-    moisture_2_percent = moister_capacitive.read_moisture()
-    
-    # to poll data from miflora sensor a new object has to be created for each poll
-    miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
-
-    # query and save values with time stamp to db - TODO: dynamic!!
+    # query and save values with time stamp to db
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
-        'plants': [
-            {'id': '1', 'name': master_data['1']['plant'], 'moisture': moisture_1_percent},
-            {'id': '2', 'name': master_data['2']['plant'], 'moisture': moisture_2_percent},
-            {'id': '3', 'name': master_data['3']['plant'], 'moisture': miflora_sensor.read_moisture(), 'conductivity': miflora_sensor.read_conductivity(),
-             'sunlight': miflora_sensor.read_sunlight(), 'temperature': miflora_sensor.read_temperature(),
-             'batteryLevel': miflora_sensor.get_battery_level()}
-        ],
+        'plants': create_plants_entries_list(),
         'temperatureGeneral': temp_sensor.read_temperature(),
         'humidityGeneral': temp_sensor.read_humidity()
     })
     logging.info('Sensor values successfully persistet in db')
 
 
-def createPlants(): # TODO: Test
+def create_plants_entries_list():
+    
+    # to poll data from miflora sensor a new object has to be created for each poll
+    miflora = MifloraSensor("80:EA:CA:89:60:A7")
 
     plants = []
     for plant_id, plant in master_data.items():
         sensor = plant['sensor_type']
 
-        if 'conductivity' in plant and 'sunlight' in plant and 'temperature' in plant:
-            moisture = exec(f'{sensor}.read_moisture()')
-            conductivity = exec(f'{sensor}.read_conductivity()')
-            sunlight = exec(f'{sensor}.read_sunlight()')
-            temperature = exec(f'{sensor}.read_temperature()')
-            batteryLevel = exec(f'{sensor}.get_battery_level()')
+        # miflora sensor
+        if 'max_conductivity' in plant and 'min_conductivity' in plant:
+            moisture = eval(f'{sensor}.read_moisture()', {}, locals())
+            conductivity = eval(f'{sensor}.read_conductivity()', {}, locals())
+            sunlight = eval(f'{sensor}.read_sunlight()', {}, locals())
+            temperature = eval(f'{sensor}.read_temperature()', {}, locals())
+            batteryLevel = eval(f'{sensor}.get_battery_level()', {}, locals())
 
             plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': batteryLevel})
-        else:
-            moisture = exec(f'{sensor}.read_moisture()', {'read_moisture': MoistureSensor.read_moisture})
-
+        else: # grove sensor
+            moisture = eval(f'{sensor}.read_moisture()', {'mositure_standard': mositure_standard, 'mositure_capacitve': mositure_capacitve}, locals())
             plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture})
-
-    return plants.sort(key=lambda p: p.id, reverse=True)
-
+            
+    return sorted(plants, key=lambda plant: plant.get('id'))
 
 
 def run_water_check():
