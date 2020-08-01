@@ -38,8 +38,8 @@ class MoistureSensor:
             (int): mosture in %
         """
 
-        min_moisture = 0 if self.sen_type == MoistureSensorType.STANDARD else 2020
-        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD else 1300
+        min_moisture = 0 if self.sen_type == MoistureSensorType.STANDARD.value else 2020
+        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD.value else 1300
         
 
         value = self.adc.read_voltage(self.channel)
@@ -63,5 +63,5 @@ class MoistureSensor:
 
 
 class MoistureSensorType(enum.Enum):
-    STANDARD = '1'
-    CAPACITIVE = '2'
+    STANDARD = 'mositure_standard'
+    CAPACITIVE = 'mositure_capacitve'

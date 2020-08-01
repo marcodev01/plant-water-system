@@ -18,11 +18,6 @@ logging.basicConfig(filename='database/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 
-# initialisation of sensor components
-temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-mositure_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
-mositure_capacitve = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
-
 # history db initialisation
 plant_db = TinyDB('database/plant_db.json')
 sensor_history = plant_db.table('sensor_history')
@@ -32,6 +27,8 @@ plants_conf = master_data_db.table('plants_configuration')
 
 
 def query_sensor_values():
+    temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
+    
     # query and save values with time stamp to db
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
@@ -44,24 +41,26 @@ def query_sensor_values():
 
 def create_plants_entries_list():
     
-    # to poll data from miflora sensor a new object has to be created for each poll
-    miflora = MifloraSensor("80:EA:CA:89:60:A7")
-
     plants = []
     for plant in plants_conf:
         sensor = plant['sensor_type']
 
         # miflora sensor
-        if 'max_conductivity' in plant and 'min_conductivity' in plant:
-            moisture = eval(f'{sensor}.read_moisture()', {}, locals())
-            conductivity = eval(f'{sensor}.read_conductivity()', {}, locals())
-            sunlight = eval(f'{sensor}.read_sunlight()', {}, locals())
-            temperature = eval(f'{sensor}.read_temperature()', {}, locals())
-            batteryLevel = eval(f'{sensor}.get_battery_level()', {}, locals())
-
-            plants.append({ 'id': plant.doc_id , 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': batteryLevel})
+        if 'mac_adress'in plant:
+            # to poll data from miflora sensor a new object has to be created for each poll
+            miflora = MifloraSensor(plant['mac_adress'])
+            
+            moisture = miflora.read_moisture()
+            conductivity = miflora.read_conductivity()
+            sunlight = miflora.read_sunlight()
+            temperature = miflora.read_temperature()
+            battery_level = miflora.get_battery_level()
+            
+            plants.append({ 'id': plant.doc_id , 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': battery_level})
         else: # grove sensor
-            moisture = eval(f'{sensor}.read_moisture()', {'mositure_standard': mositure_standard, 'mositure_capacitve': mositure_capacitve}, locals())
+            mositure_sensor = MoistureSensor(channel=plant['sensor_channel'], sensor_type=plant['sensor_type'])
+            moisture = mositure_sensor.read_moisture()
+            
             plants.append({ 'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture})
             
     return sorted(plants, key=lambda plant: plant.get('id'))
@@ -84,8 +83,8 @@ def check_moisture_level(plant):
 
         if plant['moisture'] > max_moisture:
             plant_name = plant['name']
-            plant_id = plant ['id']
-            logging.warning(f'Moisture of {plant_name} id: {plant_id} is to high!')
+            plant_id = plant['id']
+            logging.warning(f'Moisture of {plant_name} - {plant_id} is to high!')
 
         if plant['moisture'] < min_moisture:
             return True
@@ -102,8 +101,8 @@ def check_conductivity_level(plant):
 
         if plant['conductivity'] > max_conductivity:
             plant_name = plant['name']
-            plant_id = plant ['id']
-            logging.warning(f'Conductivity of {plant_name} id: {plant_id} is to high!')
+            plant_id = plant['id']
+            logging.warning(f'Conductivity of {plant_name} - {plant_id} is to high!')
 
         if plant['conductivity'] < min_conductivity:
             return True
