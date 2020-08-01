@@ -13,7 +13,7 @@ from components import MifloraSensor
 from tinydb import TinyDB
 from datetime import datetime
 
-# configurations
+# log configurations
 logging.basicConfig(filename='database/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
@@ -23,13 +23,12 @@ temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorTyp
 mositure_standard = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
 mositure_capacitve = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
 
-# db initialisation
-db = TinyDB('database/plant_db.json')
-sensor_history = db.table('sensor_history')
-
-# load master data
-with open('database/master_data.json') as data_file:
-    master_data = json.load(data_file)
+# history db initialisation
+plant_db = TinyDB('database/plant_db.json')
+sensor_history = plant_db.table('sensor_history')
+# master data db initialisation
+master_data_db = TinyDB('database/master_data.json')
+plants_conf = master_data_db.table('plants_configuration')
 
 
 def query_sensor_values():
@@ -49,7 +48,7 @@ def create_plants_entries_list():
     miflora = MifloraSensor("80:EA:CA:89:60:A7")
 
     plants = []
-    for plant_id, plant in master_data.items():
+    for plant in plants_conf:
         sensor = plant['sensor_type']
 
         # miflora sensor
@@ -60,10 +59,10 @@ def create_plants_entries_list():
             temperature = eval(f'{sensor}.read_temperature()', {}, locals())
             batteryLevel = eval(f'{sensor}.get_battery_level()', {}, locals())
 
-            plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': batteryLevel})
+            plants.append({ 'id': plant.doc_id , 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': batteryLevel})
         else: # grove sensor
             moisture = eval(f'{sensor}.read_moisture()', {'mositure_standard': mositure_standard, 'mositure_capacitve': mositure_capacitve}, locals())
-            plants.append({ 'id': plant_id, 'name': plant['plant'], 'moisture': moisture})
+            plants.append({ 'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture})
             
     return sorted(plants, key=lambda plant: plant.get('id'))
 
@@ -72,13 +71,16 @@ def run_water_check():
     latest_data = find_latest_entry()
     for plant in latest_data['plants']:
         if check_moisture_level(plant) or check_conductivity_level(plant):
-            run_water_pump(master_data[plant['id']]['relay_pin'])
+            plant_config = plants_conf.get(doc_id=int(plant['id']))
+            run_water_pump(plant_config['relay_pin'], plant_config['water_duration_sec'])
 
 
 def check_moisture_level(plant):
-    if 'max_moisture' in master_data[plant['id']]: 
-        max_moisture = master_data[plant['id']]['max_moisture']
-        min_moisture = master_data[plant['id']]['min_moisture']
+    plant_master_data = plants_conf.get(doc_id=int(plant['id']))
+    
+    if 'max_moisture' in plant_master_data: 
+        max_moisture = plant_master_data['max_moisture']
+        min_moisture = plant_master_data['min_moisture']
 
         if plant['moisture'] > max_moisture:
             plant_name = plant['name']
@@ -92,9 +94,11 @@ def check_moisture_level(plant):
 
 
 def check_conductivity_level(plant):
-    if 'max_conductivity' in master_data[plant['id']]:
-        max_conductivity = master_data[plant['id']]['max_conductivity']
-        min_conductivity = master_data[plant['id']]['min_conductivity']
+    plant_master_data = plants_conf.get(doc_id=int(plant['id']))
+    
+    if 'max_conductivity' in plant_master_data:
+        max_conductivity = plant_master_data['max_conductivity']
+        min_conductivity = plant_master_data['min_conductivity']
 
         if plant['conductivity'] > max_conductivity:
             plant_name = plant['name']
@@ -117,12 +121,10 @@ def find_latest_entry():
     return lastest_entry
 
 
-def run_water_pump(pin):
-    pump_run_time_sec = 4
-
+def run_water_pump(pin, pump_duration_sec):
     relay = Relay(pin)
     relay.on()
-    time.sleep(pump_run_time_sec)
+    time.sleep(pump_duration_sec)
     relay.off()
 
 
