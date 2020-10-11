@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 import logging
-import json
 import time
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED, EVENT_JOB_MISSED
 from components import Relay
 from components import TemperatureHumiditySensor, TempHumSensorType
-from components import MoistureSensor, MoistureSensorType
+from components import MoistureSensor
 from components import MifloraSensor
 from tinydb import TinyDB
 from datetime import datetime
@@ -28,7 +27,7 @@ plants_conf = master_data_db.table('plants_configuration')
 
 def query_sensor_values():
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-    
+
     # query and save values with time stamp to db
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
@@ -40,29 +39,28 @@ def query_sensor_values():
 
 
 def create_plants_entries_list():
-    
+
     plants = []
     for plant in plants_conf:
-        sensor = plant['sensor_type']
 
         # miflora sensor
-        if 'mac_adress'in plant:
+        if 'mac_adress' in plant:
             # to poll data from miflora sensor a new object has to be created for each poll
             miflora = MifloraSensor(plant['mac_adress'])
-            
+
             moisture = miflora.read_moisture()
             conductivity = miflora.read_conductivity()
             sunlight = miflora.read_sunlight()
             temperature = miflora.read_temperature()
             battery_level = miflora.get_battery_level()
-            
-            plants.append({ 'id': plant.doc_id , 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': battery_level})
-        else: # grove sensor
+
+            plants.append({'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': battery_level})
+        else:  # grove sensor
             mositure_sensor = MoistureSensor(channel=plant['sensor_channel'], sensor_type=plant['sensor_type'])
             moisture = mositure_sensor.read_moisture()
-            
-            plants.append({ 'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture})
-            
+
+            plants.append({'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture})
+
     return sorted(plants, key=lambda plant: plant.get('id'))
 
 
@@ -71,13 +69,13 @@ def run_water_check():
     for plant in latest_data['plants']:
         if check_moisture_level(plant) or check_conductivity_level(plant):
             plant_config = plants_conf.get(doc_id=int(plant['id']))
-            run_water_pump(plant_config['relay_pin'], plant_config['water_duration_sec'])
+            run_water_pump(plant_config['relay_pin'], plant_config['water_duration_sec'], plant_config['water_iterations'])
 
 
 def check_moisture_level(plant):
     plant_master_data = plants_conf.get(doc_id=int(plant['id']))
-    
-    if 'max_moisture' in plant_master_data: 
+
+    if 'max_moisture' in plant_master_data:
         max_moisture = plant_master_data['max_moisture']
         min_moisture = plant_master_data['min_moisture']
 
@@ -88,13 +86,13 @@ def check_moisture_level(plant):
 
         if plant['moisture'] < min_moisture:
             return True
-    
+
     return False
 
 
 def check_conductivity_level(plant):
     plant_master_data = plants_conf.get(doc_id=int(plant['id']))
-    
+
     if 'max_conductivity' in plant_master_data:
         max_conductivity = plant_master_data['max_conductivity']
         min_conductivity = plant_master_data['min_conductivity']
@@ -106,7 +104,7 @@ def check_conductivity_level(plant):
 
         if plant['conductivity'] < min_conductivity:
             return True
-    
+
     return False
 
 
@@ -120,11 +118,13 @@ def find_latest_entry():
     return lastest_entry
 
 
-def run_water_pump(pin, pump_duration_sec):
+def run_water_pump(pin, pump_duration_sec, number_of_runs):
     relay = Relay(pin)
-    relay.on()
-    time.sleep(pump_duration_sec)
-    relay.off()
+
+    for _ in range(number_of_runs):
+        relay.on()
+        time.sleep(pump_duration_sec)
+        relay.off()
 
 
 def job_state_listener(event):
@@ -143,7 +143,7 @@ def job_state_listener(event):
 if __name__ == '__main__':
     print('water system is running...')
     sched = BlockingScheduler()
-    sched.add_job(query_sensor_values, 'interval', seconds=5, id='query_sensor_values')
-    sched.add_job(run_water_check, 'interval', seconds=8, id='run_water_check')
+    sched.add_job(query_sensor_values, 'interval', minutes=15, id='query_sensor_values')
+    sched.add_job(run_water_check, 'interval', hours=1, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()

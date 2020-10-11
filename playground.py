@@ -25,10 +25,10 @@ def test_relay():
 def two_channel_relay():
     while True:
         channel1_relay.on()
-        time.sleep(2)
+        time.sleep(1)
         channel1_relay.off()
         channel2_relay.on()
-        time.sleep(2)
+        time.sleep(1)
         channel2_relay.off()
         
 def off_channel_relay():
@@ -69,9 +69,9 @@ def read_miflora():
         time.sleep(3)
 
 
-test_relay()
+# test_relay()
 # two_channel_relay()
-# off_channel_relay()
+off_channel_relay()
 # read_moisture_stand()
 # read_moisture_cap()
 # read_miflora()
