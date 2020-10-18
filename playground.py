@@ -9,9 +9,8 @@ relay = Relay(pin=5)
 channel1_relay = Relay(pin=22)
 channel2_relay = Relay(pin=23)
 temp = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-moister_stand = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD)
-moisture_cap = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE)
-# miflora_sensor = MifloraSensor("80:EA:CA:89:60:A7")
+moister_stand = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)
+moisture_cap = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
 
 
 def test_relay():
@@ -64,6 +63,7 @@ def read_miflora():
         print("Miflora sunlight: ", miflora_sensor.read_sunlight())
         print("Miflora conductivity: ", miflora_sensor.read_conductivity())
         print("Miflora temperature: ", miflora_sensor.read_temperature())
+        print("Miflora battery: ", miflora_sensor.get_battery_level())
         time.sleep(3)
 
 
@@ -73,3 +73,4 @@ def read_miflora():
 # read_moisture_stand()
 # read_moisture_cap()
 # read_miflora()
+read_temp()

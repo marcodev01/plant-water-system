@@ -18,7 +18,7 @@ logging.basicConfig(filename='src/database/water_system.log',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 
 # history db initialisation
-plant_db = TinyDB('src/database/plant_db.json')
+plant_db = TinyDB('src/database/plant_history.json')
 sensor_history = plant_db.table('sensor_history')
 # master data db initialisation
 master_data_db = TinyDB('src/database/master_data.json')
@@ -151,7 +151,7 @@ def job_state_listener(event):
 if __name__ == '__main__':
     print('water system is running...')
     sched = BlockingScheduler()
-    sched.add_job(query_sensor_values, 'interval', seconds=2, id='query_sensor_values')
-    sched.add_job(run_water_check, 'interval', seconds=3, id='run_water_check')
+    sched.add_job(query_sensor_values, 'interval', minutes=60, id='query_sensor_values')
+    sched.add_job(run_water_check, 'interval', minutes=90, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()

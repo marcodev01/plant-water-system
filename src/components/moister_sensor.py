@@ -16,15 +16,15 @@ class MoistureSensor:
     """
 
     def __init__(self, channel, sensor_type):
-        self.channel = channel # TODO: evtl. remove redundant variable
-        self.sen_type = sensor_type # TODO: evtl. remove redundant variable
+        self._channel = channel 
+        self._sensor_type = sensor_type
         # Analog to Digital Converter (ADC) - external chip unit on grove pi hat
         self.adc = ADC()
 
     @property
     def sensor_type(self):
         """Get moisture sensor type - either STANDARD (1) or CAPACITIVE (2)"""
-        return self.sen_type
+        return self._sensor_type
 
     def read_moisture(self):
         """
@@ -38,11 +38,11 @@ class MoistureSensor:
             (int): mosture in %
         """
 
-        min_moisture = 0 if self.sen_type == MoistureSensorType.STANDARD.value else 2020
-        max_moisture = 1800 if self.sen_type == MoistureSensorType.STANDARD.value else 1300
+        min_moisture = 0 if self._sensor_type == MoistureSensorType.STANDARD.value else 2020
+        max_moisture = 1800 if self._sensor_type == MoistureSensorType.STANDARD.value else 1300
         
 
-        value = self.adc.read_voltage(self.channel)
+        value = self.adc.read_voltage(self._channel)
 
         return self.__convert_moisture_voltage_to_percent(min_moisture, max_moisture, value)
 
