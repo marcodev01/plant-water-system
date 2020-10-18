@@ -1476,3 +1476,8 @@ TypeError: string indices must be integers
 29-08-20 10:12:57 - INFO - Job "temp_run_water_pump (trigger: interval[12:00:00], next run at: 2020-08-29 22:12:48 CEST)" executed successfully
 29-08-20 22:12:48 - INFO - Running job "temp_run_water_pump (trigger: interval[12:00:00], next run at: 2020-08-30 10:12:48 CEST)" (scheduled at 2020-08-29 22:12:48.483276+02:00)
 29-08-20 22:12:57 - INFO - Job "temp_run_water_pump (trigger: interval[12:00:00], next run at: 2020-08-30 10:12:48 CEST)" executed successfully
+11-10-20 22:49:35 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+11-10-20 22:49:35 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+11-10-20 22:49:35 - INFO - Added job "query_sensor_values" to job store "default"
+11-10-20 22:49:35 - INFO - Added job "run_water_check" to job store "default"
+11-10-20 22:49:35 - INFO - Scheduler started

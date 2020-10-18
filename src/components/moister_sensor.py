@@ -16,8 +16,8 @@ class MoistureSensor:
     """
 
     def __init__(self, channel, sensor_type):
-        self.channel = channel
-        self.sen_type = sensor_type
+        self.channel = channel # TODO: evtl. remove redundant variable
+        self.sen_type = sensor_type # TODO: evtl. remove redundant variable
         # Analog to Digital Converter (ADC) - external chip unit on grove pi hat
         self.adc = ADC()
 
@@ -63,5 +63,5 @@ class MoistureSensor:
 
 
 class MoistureSensorType(enum.Enum):
-    STANDARD = 'mositure_standard'
-    CAPACITIVE = 'mositure_capacitve'
+    STANDARD = 'moisture_standard'
+    CAPACITIVE = 'moisture_capacitve'

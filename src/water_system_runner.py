@@ -13,15 +13,15 @@ from tinydb import TinyDB
 from datetime import datetime
 
 # log configurations
-logging.basicConfig(filename='database/water_system.log',
+logging.basicConfig(filename='src/database/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 
 # history db initialisation
-plant_db = TinyDB('database/plant_db.json')
+plant_db = TinyDB('src/database/plant_db.json')
 sensor_history = plant_db.table('sensor_history')
 # master data db initialisation
-master_data_db = TinyDB('database/master_data.json')
+master_data_db = TinyDB('src/database/master_data.json')
 plants_conf = master_data_db.table('plants_configuration')
 
 
@@ -54,7 +54,15 @@ def create_plants_entries_list():
             temperature = miflora.read_temperature()
             battery_level = miflora.get_battery_level()
 
-            plants.append({'id': plant.doc_id, 'name': plant['plant'], 'moisture': moisture, 'conductivity': conductivity, 'sunlight': sunlight, 'temperature': temperature, 'batteryLevel': battery_level})
+            plants.append({
+                'id': plant.doc_id, 
+                'name': plant['plant'], 
+                'moisture': moisture, 
+                'conductivity': conductivity, 
+                'sunlight': sunlight, 
+                'temperature': temperature, 
+                'batteryLevel': battery_level
+                })
         else:  # grove sensor
             mositure_sensor = MoistureSensor(channel=plant['sensor_channel'], sensor_type=plant['sensor_type'])
             moisture = mositure_sensor.read_moisture()
@@ -143,7 +151,7 @@ def job_state_listener(event):
 if __name__ == '__main__':
     print('water system is running...')
     sched = BlockingScheduler()
-    sched.add_job(query_sensor_values, 'interval', minutes=15, id='query_sensor_values')
-    sched.add_job(run_water_check, 'interval', hours=1, id='run_water_check')
+    sched.add_job(query_sensor_values, 'interval', seconds=2, id='query_sensor_values')
+    sched.add_job(run_water_check, 'interval', seconds=3, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()
