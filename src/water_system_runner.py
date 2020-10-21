@@ -9,6 +9,7 @@ from components import Relay
 from components import TemperatureHumiditySensor, TempHumSensorType
 from components import MoistureSensor
 from components import MifloraSensor
+from components import SunlightSensor
 from tinydb import TinyDB
 from datetime import datetime
 
@@ -27,13 +28,17 @@ plants_conf = master_data_db.table('plants_configuration')
 
 def query_sensor_values():
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
+    sunlight_sensor = SunlightSensor()
 
     # query and save values with time stamp to db
     sensor_history.insert({
         'ts': datetime.now().isoformat(timespec='seconds'),
         'plants': create_plants_entries_list(),
-        'temperatureGeneral': temp_sensor.read_temperature(),
-        'humidityGeneral': temp_sensor.read_humidity()
+        'temperature': temp_sensor.read_temperature(),
+        'humidity': temp_sensor.read_humidity(),
+        'visible_light': sunlight_sensor.readVisible(),
+        'UV_index': sunlight_sensor.readUV(),
+        'IR_light': sunlight_sensor.readIR(),
     })
     logging.info('Sensor values successfully persistet in db')
 
