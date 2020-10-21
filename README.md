@@ -21,6 +21,7 @@ All actions, warnings and errors are [logged](https://docs.python.org/3/library/
 ### Libraries
  * Groove Py: https://github.com/Seeed-Studio/grove.py
  * temp & humidity sensor: https://github.com/Seeed-Studio/Seeed_Python_DHT
+ * sunlight sensor: https://github.com/Seeed-Studio/Seeed_Python_SI114X
  * MiFlora: https://github.com/basnijholt/miflora
  * Advanced Python Scheduler: https://apscheduler.readthedocs.io/en/stable/
  * tinyDB: https://tinydb.readthedocs.io/en/stable/
