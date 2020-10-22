@@ -81,4 +81,4 @@ def read_sunlight_native():
 # read_moisture_cap()
 # read_miflora()
 # read_temp()
-read_sunlight_native()
+# read_sunlight_native()

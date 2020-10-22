@@ -1,7 +1,7 @@
 {
     "plants_configuration": {
         "1": { "sensor_type": "miflora", "mac_adress": "80:EA:CA:89:60:A7", "plant": "Peperoncion Veena / Limon", "relay_pin": 22, "water_duration_sec": 1, "water_iterations": 3, "max_moisture": 65, "min_moisture": 32, "max_conductivity": 2500, "min_conductivity": 400 },
-        "2": { "sensor_type": "moisture_standard", "sensor_channel": 0, "plant": "Aji Lemon Drop / Piemento de Padron", "relay_pin": 23, "water_duration_sec": 1, "water_iterations": 3, "max_moisture": 90, "min_moisture": 58 },
-        "3": { "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "Piemento de Padron / Limon", "relay_pin": 5, "water_duration_sec": 2, "water_iterations": 2, "max_moisture": 90, "min_moisture": 58 }
+        "2": { "sensor_type": "moisture_standard", "sensor_channel": 0, "plant": "Aji Lemon Drop / Piemento de Padron", "relay_pin": 23, "water_duration_sec": 1, "water_iterations": 3, "max_moisture": 90, "min_moisture": 52 },
+        "3": { "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "Piemento de Padron / Limon", "relay_pin": 5, "water_duration_sec": 2, "water_iterations": 2, "max_moisture": 90, "min_moisture": 52 }
     }
 }

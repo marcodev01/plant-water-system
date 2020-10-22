@@ -108,6 +108,10 @@ def run_water_check():
         if check_moisture_level(plant) or check_conductivity_level(plant):
             plant_config = plants_conf.get(doc_id=int(plant['id']))
             run_water_pump(plant_config['relay_pin'], plant_config['water_duration_sec'], plant_config['water_iterations'])
+            
+            plant_name = plant_config['plant']
+            print(f'{datetime.now()}: Run water pump for {plant_name}')
+            logging.info(f'Run water pump for {plant_name}')
 
 
 def check_moisture_level(plant):
@@ -169,13 +173,8 @@ def job_state_listener(event):
     if event.code == EVENT_JOB_ERROR:
         print(f'An error occured during job please check the logs! {event.exception}')
         logging.error(f'EVENT_JOB_ERROR: {event.exception}')
-    elif event.code == EVENT_JOB_MISSED:
+    if event.code == EVENT_JOB_MISSED:
         logging.warning('EVENT_JOB_MISSED: A Job exceution missed!')
-    elif event.code == EVENT_JOB_EXECUTED:
-        print(f'DONE {datetime.now()}')
-    else:
-        print(f'UNKNOWN_EVENT: An unknown event occured please check the logs! {event}')
-        logging.warning(f'UNKNOWN_EVENT: {event}')
 
 
 
