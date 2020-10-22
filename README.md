@@ -29,7 +29,6 @@ All actions, warnings and errors are [logged](https://docs.python.org/3/library/
  * dateTime: https://docs.python.org/3/library/datetime.html
 
 # TODO
-* implement Sunlight sensor: https://github.com/Seeed-Studio/Seeed_Python_SI114X / https://wiki.seeedstudio.com/Grove-Sunlight_Sensor/
 * Configuration App
 
 ##### Author: Marc Touw

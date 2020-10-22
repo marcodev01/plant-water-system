@@ -26,6 +26,11 @@ master_data_db = TinyDB('src/database/master_data.json')
 plants_conf = master_data_db.table('plants_configuration')
 
 
+
+#################################
+### plant db helper functions ###
+#################################
+
 def query_sensor_values():
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
     sunlight_sensor = SunlightSensor()
@@ -77,6 +82,26 @@ def create_plants_entries_list():
     return sorted(plants, key=lambda plant: plant.get('id'))
 
 
+
+#######################################
+### master data db helper functions ###
+#######################################
+
+def find_latest_entry():
+    lastest_entry = None
+    for entry in sensor_history:
+        if lastest_entry is None:
+            lastest_entry = entry
+        elif datetime.fromisoformat(entry['ts']) > datetime.fromisoformat(lastest_entry['ts']):
+            lastest_entry = entry
+    return lastest_entry
+
+
+
+#####################################
+### water system helper functions ###
+#####################################
+
 def run_water_check():
     latest_data = find_latest_entry()
     for plant in latest_data['plants']:
@@ -121,15 +146,10 @@ def check_conductivity_level(plant):
     return False
 
 
-def find_latest_entry():
-    lastest_entry = None
-    for entry in sensor_history:
-        if lastest_entry is None:
-            lastest_entry = entry
-        elif datetime.fromisoformat(entry['ts']) > datetime.fromisoformat(lastest_entry['ts']):
-            lastest_entry = entry
-    return lastest_entry
 
+###########################
+### water system runner ###
+###########################
 
 def run_water_pump(pin, pump_duration_sec, number_of_runs):
     relay = Relay(pin)
@@ -139,6 +159,11 @@ def run_water_pump(pin, pump_duration_sec, number_of_runs):
         time.sleep(pump_duration_sec)
         relay.off()
 
+
+
+#####################
+### miscellaneous ###
+#####################
 
 def job_state_listener(event):
     if event.code == EVENT_JOB_ERROR:
@@ -152,6 +177,11 @@ def job_state_listener(event):
         print(f'UNKNOWN_EVENT: An unknown event occured please check the logs! {event}')
         logging.warning(f'UNKNOWN_EVENT: {event}')
 
+
+
+#####################
+### job scheduler ###
+#####################
 
 if __name__ == '__main__':
     print('water system is running...')
