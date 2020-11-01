@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED, EVENT_JOB_MISSED
+from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
 from water_system_helper import persist_sensor_values, run_water_check
 
 from tinydb import TinyDB
@@ -31,7 +31,6 @@ def run_water_system():
 
 def job_state_listener(event):
     if event.code == EVENT_JOB_ERROR:
-        print(f'An error occured during job please check the logs! {event.exception}')
         logger.error(f'EVENT_JOB_ERROR: {event.exception}')
     if event.code == EVENT_JOB_MISSED:
         logger.warning('EVENT_JOB_MISSED: A Job exceution missed!')
@@ -44,7 +43,7 @@ def job_state_listener(event):
 if __name__ == '__main__':
     print('water system is running...')
     sched = BlockingScheduler()
-    sched.add_job(query_sensor_values, 'interval', minutes=40, id='query_sensor_values')
+    sched.add_job(query_sensor_values, 'interval', minutes=42, id='query_sensor_values')
     sched.add_job(run_water_system, 'interval', minutes=60, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()

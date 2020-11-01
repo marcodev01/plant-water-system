@@ -3,7 +3,7 @@
 import time
 import logging
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from datetime import datetime
 from tinydb import table
@@ -47,10 +47,10 @@ def persist_sensor_values(sensor_history_db: table.Table, master_db_plants_conf:
     logger.info('Sensor values successfully queried and persistet in db')
 
 
-def create_plants_entries_list(master_db_plants_conf: table.Table) -> List[Dict[str, any]]:
+def create_plants_entries_list(master_db_plants_conf: table.Table) -> List[Dict[str, Union[str, int]]]:
     """ create a list with all configured plants and its sensor values - sorted by entry id"""
 
-    plants = []
+    plants: List[Dict[str, Union[str, int]]] = []
     for plant_conf in master_db_plants_conf:
 
         # miflora sensor
@@ -78,8 +78,17 @@ def create_plants_entries_list(master_db_plants_conf: table.Table) -> List[Dict[
             moisture = mositure_sensor.read_moisture()
 
             plants.append({'id': plant_conf.doc_id, 'name': plant_conf['plant'], 'moisture': moisture})
+            
 
-    return sorted(plants, key=lambda plant: plant.get('id'))
+    return sorted(plants, key=plant_entry_sorter)
+
+def plant_entry_sorter(plant: Dict[str, Union[str, int]]):
+    """ sorter function for plant entries list"""
+    plant_id = plant.get('id')
+    if not plant_id is None:
+        return plant_id
+    else:
+        return -1
 
 
 
@@ -88,37 +97,39 @@ def create_plants_entries_list(master_db_plants_conf: table.Table) -> List[Dict[
 ########################################################
 
 
-def is_moisture_level_low(plant: Dict[str, any], plant_master_data: Dict[str, any]) -> bool:
+def is_moisture_level_low(plant: table.Document, plant_master_data: table.Document) -> bool:
     """ compare current mositure level with configured max and min moisture values"""
 
     if 'max_moisture' in plant_master_data:
         max_moisture = plant_master_data['max_moisture']
         min_moisture = plant_master_data['min_moisture']
+        moisture = plant['moisture']
 
-        if plant['moisture'] > max_moisture:
+        if moisture > max_moisture:
             plant_name = plant['name']
             plant_id = plant['id']
-            logger.warning(f'Moisture of {plant_name} - {plant_id} is to high!')
+            logger.warning(f'Moisture of {plant_name} (Id: {plant_id}) is to high!')
 
-        if plant['moisture'] < min_moisture:
+        if moisture < min_moisture:
             return True
 
     return False
 
 
-def is_conductivity_level_low(plant: Dict[str, any], plant_master_data: Dict[str, any]) -> bool:
+def is_conductivity_level_low(plant: table.Document, plant_master_data: table.Document) -> bool:
     """ compare current conductivity level with configured max and min conductivity values"""
 
     if 'max_conductivity' in plant_master_data:
         max_conductivity = plant_master_data['max_conductivity']
         min_conductivity = plant_master_data['min_conductivity']
+        conductivity = plant['conductivity']
 
-        if plant['conductivity'] > max_conductivity:
+        if conductivity > max_conductivity:
             plant_name = plant['name']
             plant_id = plant['id']
-            logger.warning(f'Conductivity of {plant_name} - {plant_id} is to high!')
+            logger.warning(f'Conductivity of {plant_name} (Id: {plant_id}) is to high!')
 
-        if plant['conductivity'] < min_conductivity:
+        if conductivity < min_conductivity:
             return True
 
     return False
