@@ -21,7 +21,7 @@ class Relay(GPIO):
         pin2(int): number of GPIO pin the relay switch 2 is connected
     """
     def __init__(self, pin):
-        super(Relay, self).__init__(pin, GPIO.OUT)
+        super(Relay, self).__init__(pin, GPIO.OUT) # type: ignore
 
     def on(self):
         """ switch on electric circuit channel 1"""
