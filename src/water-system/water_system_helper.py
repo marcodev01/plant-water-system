@@ -16,7 +16,7 @@ from components import Relay
 
 
 # log configurations
-logging.basicConfig(filename='src/database/water_system.log',
+logging.basicConfig(filename='src/db/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 logger = logging.getLogger(__name__) # module logger instance

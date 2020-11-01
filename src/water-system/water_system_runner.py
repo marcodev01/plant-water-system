@@ -9,16 +9,16 @@ import logging
 
 
 # log configurations
-logging.basicConfig(filename='src/database/water_system.log',
+logging.basicConfig(filename='src/db/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 logger = logging.getLogger(__name__) # module logger instance
 
 # history db initialisation
-plant_db = TinyDB('src/database/plant_history.json')
+plant_db = TinyDB('src/db/plant_history.json')
 sensor_history = plant_db.table('sensor_history')
 # master data db initialisation
-master_data_db = TinyDB('src/database/master_data.json')
+master_data_db = TinyDB('src/db/master_data.json')
 plants_conf = master_data_db.table('plants_configuration')
 
 
@@ -44,7 +44,7 @@ def job_state_listener(event):
 if __name__ == '__main__':
     print('water system is running...')
     sched = BlockingScheduler()
-    sched.add_job(query_sensor_values, 'interval', minutes=1, id='query_sensor_values')
-    sched.add_job(run_water_system, 'interval', minutes=2, id='run_water_check')
+    sched.add_job(query_sensor_values, 'interval', minutes=40, id='query_sensor_values')
+    sched.add_job(run_water_system, 'interval', minutes=60, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()

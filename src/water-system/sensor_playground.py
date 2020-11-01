@@ -93,7 +93,7 @@ def run_sunlight_sensor():
 # run_temp_hum_pro_sensor()
 
 # run_moisture_standard_sensor()
-run_moisture_capacitive_sensor()
+# run_moisture_capacitive_sensor()
 
 # run_miflora_sensor()
 
