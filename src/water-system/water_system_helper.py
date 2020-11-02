@@ -22,9 +22,11 @@ logging.basicConfig(filename='src/db/water_system.log',
 logger = logging.getLogger(__name__) # module logger instance
 
 
+
 ##############################################################
 # helper functions for persisting to sensor history database #
 ##############################################################
+
 
 def persist_sensor_values(sensor_history_db: table.Table, master_db_plants_conf: table.Table) -> None:
     """ 
@@ -168,9 +170,11 @@ def run_water_check(sensor_history_db: table.Table, master_db_plants_conf: table
             logger.info(f'Run water pump for {plant_name}')
 
 
+
 ######################################
 # helper functions to run water pump #
 ######################################
+
 
 def run_water_pump(pin: int, pump_duration_sec: float, number_of_runs: int) -> None:
     """ run water pump of specified relay pin and repeat for specfied number of runs """

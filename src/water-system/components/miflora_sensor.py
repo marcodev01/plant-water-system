@@ -9,7 +9,7 @@ from miflora import miflora_scanner
 
 
 class MifloraSensor:
-    """ # noqa: E501
+    """
     [Bluetooth]
     Miflora Sensor class for:
         Miflora (https://www.home-assistant.io/integrations/miflora/)
