@@ -9,7 +9,7 @@ import logging
 
 
 # log configurations
-logging.basicConfig(filename='src/db/water_system.log',
+logging.basicConfig(filename='src/log/water_system.log',
                     filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
 logger = logging.getLogger(__name__) # module logger instance
@@ -21,13 +21,17 @@ sensor_history = plant_db.table('sensor_history')
 master_data_db = TinyDB('src/db/master_data.json')
 plants_conf = master_data_db.table('plants_configuration')
 
+query_sensor_values_on = True
+run_water_system_on = True
+
 
 def query_sensor_values():
-    persist_sensor_values(sensor_history, plants_conf)
+    if query_sensor_values_on:
+        persist_sensor_values(sensor_history, plants_conf)
 
 def run_water_system():
     run_water_check(sensor_history, plants_conf)
-
+    
 
 def job_state_listener(event):
     if event.code == EVENT_JOB_ERROR:

@@ -18,6 +18,9 @@ The executions for reading and persisting the sensor values as well as checks fo
 
 All actions, warnings and errors are [logged](https://docs.python.org/3/library/logging.html) in *water_system.log* 
 
+## API
+An interface for a REST-API is implemented with [FastAPI](https://fastapi.tiangolo.com/)
+
 ### Libraries
  * Groove Py: https://github.com/Seeed-Studio/grove.py
  * temp & humidity sensor: https://github.com/Seeed-Studio/Seeed_Python_DHT
@@ -27,6 +30,7 @@ All actions, warnings and errors are [logged](https://docs.python.org/3/library/
  * tinyDB: https://tinydb.readthedocs.io/en/stable/
  * logging: https://docs.python.org/3/library/logging.html
  * dateTime: https://docs.python.org/3/library/datetime.html
+ * FastAPI: https://fastapi.tiangolo.com/
 
 # TODO
 * Configuration App

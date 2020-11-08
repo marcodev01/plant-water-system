@@ -1,0 +1,55 @@
+01-11-20 20:10:28 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 20:10:28 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 20:10:28 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 20:10:28 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 20:10:28 - INFO - Scheduler started
+01-11-20 20:11:28 - INFO - Running job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 20:11:28 CET)" (scheduled at 2020-11-01 20:11:28.627843+01:00)
+01-11-20 20:11:33 - INFO - Sensor values successfully queried and persistet in db
+01-11-20 20:11:33 - INFO - Job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 20:12:28 CET)" executed successfully
+01-11-20 20:12:28 - INFO - Running job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 20:12:28 CET)" (scheduled at 2020-11-01 20:12:28.627843+01:00)
+01-11-20 20:12:28 - INFO - Running job "run_water_system (trigger: interval[0:02:00], next run at: 2020-11-01 20:12:28 CET)" (scheduled at 2020-11-01 20:12:28.630783+01:00)
+01-11-20 20:12:31 - INFO - Run water pump for Aji Lemon Drop / Piemento de Padron
+01-11-20 20:12:31 - INFO - Job "run_water_system (trigger: interval[0:02:00], next run at: 2020-11-01 20:14:28 CET)" executed successfully
+01-11-20 20:12:32 - INFO - Sensor values successfully queried and persistet in db
+01-11-20 20:12:32 - INFO - Job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 20:13:28 CET)" executed successfully
+01-11-20 22:04:17 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:04:17 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:04:17 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 22:04:17 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 22:04:17 - INFO - Scheduler started
+01-11-20 22:13:53 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:13:53 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:13:53 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 22:13:53 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 22:13:53 - INFO - Scheduler started
+01-11-20 22:19:21 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:19:21 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:19:21 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 22:19:21 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 22:19:21 - INFO - Scheduler started
+01-11-20 22:33:36 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:33:36 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:33:36 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 22:33:36 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 22:33:36 - INFO - Scheduler started
+01-11-20 22:34:40 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:34:40 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+01-11-20 22:34:40 - INFO - Added job "query_sensor_values" to job store "default"
+01-11-20 22:34:40 - INFO - Added job "run_water_system" to job store "default"
+01-11-20 22:34:40 - INFO - Scheduler started
+01-11-20 22:35:40 - INFO - Running job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 22:35:40 CET)" (scheduled at 2020-11-01 22:35:40.897652+01:00)
+01-11-20 22:35:45 - INFO - Sensor values successfully queried and persistet in db
+01-11-20 22:35:45 - INFO - Job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 22:36:40 CET)" executed successfully
+01-11-20 22:36:40 - INFO - Running job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 22:36:40 CET)" (scheduled at 2020-11-01 22:36:40.897652+01:00)
+01-11-20 22:36:40 - INFO - Running job "run_water_system (trigger: interval[0:02:00], next run at: 2020-11-01 22:36:40 CET)" (scheduled at 2020-11-01 22:36:40.899178+01:00)
+01-11-20 22:36:43 - INFO - Run water pump for Peperoncion Veena / Limon
+01-11-20 22:36:43 - WARNING - Moisture of Aji Lemon Drop / Piemento de Padron - 2 is to high!
+01-11-20 22:36:45 - INFO - Sensor values successfully queried and persistet in db
+01-11-20 22:36:45 - INFO - Job "query_sensor_values (trigger: interval[0:01:00], next run at: 2020-11-01 22:37:40 CET)" executed successfully
+01-11-20 22:36:47 - INFO - Run water pump for Piemento de Padron / Limon
+01-11-20 22:36:47 - INFO - Job "run_water_system (trigger: interval[0:02:00], next run at: 2020-11-01 22:38:40 CET)" executed successfully
+08-11-20 20:11:58 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+08-11-20 20:11:58 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+08-11-20 20:11:58 - INFO - Added job "query_sensor_values" to job store "default"
+08-11-20 20:11:58 - INFO - Added job "run_water_system" to job store "default"
+08-11-20 20:11:58 - INFO - Scheduler started
