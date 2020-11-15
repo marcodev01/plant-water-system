@@ -6,23 +6,25 @@ import logging
 from tinydb.table import Document
 
 
-# log configurations
-logging.basicConfig(filename='src/log/api.log',
-                    filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
-logger = logging.getLogger(__name__) # module logger instance
-
-# history db initialisation
-plant_db = TinyDB('src/db/plant_history.json')
-sensor_history = plant_db.table('sensor_history')
-# master data db initialisation
-master_data_db = TinyDB('src/db/master_data.json')
-plants_conf = master_data_db.table('plants_configuration')
+logger = logging.getLogger('api') # module logger instance
 
 
 ###########################
 # plant history db helper #
 ###########################
-def get_plant_configurations() -> List[Document]:
-    return plants_conf.all()
 
+def get_water_system_log_fragment(nmb_lines: int) -> str:
+    water_sys_log_path = '../log/water_system.log'
+    log_fragment = ''
+    with open(water_sys_log_path) as file:
+        for line in (file.readlines() [-nmb_lines:]): 
+            log_fragment = log_fragment + line + '\n'
+    return log_fragment
+
+def get_api_log_fragment(nmb_lines: int) -> str:
+    water_sys_log_path = '../log/api.log'
+    log_fragment = ''
+    with open(water_sys_log_path) as file:
+        for line in (file.readlines() [-nmb_lines:]): 
+            log_fragment = log_fragment + line + '\n'
+    return log_fragment

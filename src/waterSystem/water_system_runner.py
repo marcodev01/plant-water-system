@@ -25,16 +25,25 @@ sensor_history = plant_db.table('sensor_history')
 master_data_db = DbAdapter().master_data_db
 plants_configuration = master_data_db.table('plants_configuration')
 
-query_sensor_values_on = True
-run_water_system_on = True
-
+# create scheduler
+sched = BlockingScheduler()
 
 def query_sensor_values() -> None:
-    if query_sensor_values_on:
-        persist_sensor_values(sensor_history, plants_configuration)
+    persist_sensor_values(sensor_history, plants_configuration)
 
 def run_water_system() -> None:
     run_water_check(sensor_history, plants_configuration)
+
+
+def get_state_of_water_system() -> int:
+    # STATE_STOPPED = 0 / STATE_RUNNING = 1 / STATE_PAUSED = 2
+    return sched.state
+
+def pause_water_system() -> None:
+    return sched.pause()
+
+def resume_water_system() -> None:
+    return sched.resume()
     
 
 def job_state_listener(event) -> None:
@@ -49,8 +58,7 @@ def job_state_listener(event) -> None:
 #####################
 
 if __name__ == '__main__':
-    print('water system is running...')
-    sched = BlockingScheduler()
+    print('water system script is running...')
     sched.add_job(query_sensor_values, 'interval', minutes=42, id='query_sensor_values')
     sched.add_job(run_water_system, 'interval', minutes=60, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
