@@ -1,9 +1,9 @@
 import time
-from components import Relay
-from components import TemperatureHumiditySensor, TempHumSensorType
-from components import MoistureSensor, MoistureSensorType
-from components import MifloraSensor
-from components import SunlightSensor
+from src.waterSystem.components import Relay
+from src.waterSystem.components import TemperatureHumiditySensor, TempHumSensorType
+from src.waterSystem.components import MoistureSensor, MoistureSensorType
+from src.waterSystem.components import MifloraSensor
+from src.waterSystem.components import SunlightSensor
 
 
 relay = Relay(pin=5)

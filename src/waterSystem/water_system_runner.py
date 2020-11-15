@@ -2,7 +2,8 @@
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
-from water_system_helper import persist_sensor_values, run_water_check
+from src.waterSystem.water_level_helper import run_water_check
+from src.waterSystem.water_system_db_helper import persist_sensor_values
 
 from tinydb import TinyDB
 import logging
@@ -10,9 +11,11 @@ import logging
 
 # log configurations
 logging.basicConfig(filename='src/log/water_system.log',
-                    filemode='a', format='%(asctime)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%m-%y %H:%M:%S', level=logging.INFO)
-logger = logging.getLogger(__name__) # module logger instance
+                    filemode='a', 
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    datefmt='%d-%m-%y %H:%M:%S', 
+                    level=logging.INFO)
+logger = logging.getLogger('waterSystem')
 
 # history db initialisation
 plant_db = TinyDB('src/db/plant_history.json')

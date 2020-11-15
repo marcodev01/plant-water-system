@@ -2,5 +2,9 @@
 */__pycache__
 *.pyc
 .vscode
+*.log
 pyrightconfig.json
 src/db/*
+venv
+setup.py
+src.egg-info

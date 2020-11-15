@@ -1,7 +1,9 @@
 
-from typing import Dict, Union
+from typing import List, Union
 from tinydb import TinyDB
 import logging
+
+from tinydb.table import Document
 
 
 # log configurations
@@ -21,6 +23,6 @@ plants_conf = master_data_db.table('plants_configuration')
 ###########################
 # plant history db helper #
 ###########################
-def get_plant_configurations() -> Dict[str, Union[str, int]]:
+def get_plant_configurations() -> List[Document]:
     return plants_conf.all()
 

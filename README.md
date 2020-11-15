@@ -4,7 +4,7 @@ The chilli water plant system is controlled by an Raspbery PI 3 with the [Grove 
 and several connected sensors of Grove's ecosystem as well as Xiaomi Mi Flora Plant Sensor. The water system itself is electrically opererated by 5V water pumps and controlled with relays.
 The system is consiting of following applications:
 
-* Water system runner - *written in phyton 3.x*
+* Water system runner - *written in phyton 3.7*
 * TODO: App
 
 ## Water System Runner
@@ -31,6 +31,9 @@ An interface for a REST-API is implemented with [FastAPI](https://fastapi.tiango
  * logging: https://docs.python.org/3/library/logging.html
  * dateTime: https://docs.python.org/3/library/datetime.html
  * FastAPI: https://fastapi.tiangolo.com/
+
+# Setup dev environment
+Allow sibling packages in python with virtual environment: [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
 
 # TODO
 * Configuration App
