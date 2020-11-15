@@ -4,6 +4,7 @@ from typing import Optional
 from fastapi import FastAPI
 from src.model.plant_configuration import PlantConfiguration
 from src.model.app_type import AppType
+from src.db.db_adapter import DbAdapter
 
 import logging
 
@@ -14,6 +15,13 @@ logging.basicConfig(filename='../log/api.log',
                     datefmt='%d-%m-%y %H:%M:%S', 
                     level=logging.INFO)
 logger = logging.getLogger('api')
+
+# history db initialisation
+plant_db = DbAdapter().plant_db
+sensor_history = plant_db.table('sensor_history')
+# master data db initialisation
+master_data_db = DbAdapter().master_data_db
+plants_configuration = master_data_db.table('plants_configuration')
 
 app = FastAPI()
 

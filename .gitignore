@@ -4,7 +4,6 @@
 .vscode
 *.log
 pyrightconfig.json
-src/db/*
+src/db/*.json
 venv
-setup.py
 src.egg-info
