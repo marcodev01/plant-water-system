@@ -4,9 +4,11 @@ import time
 import logging
 
 from typing import Union
+from src.model.plant_entry import Plant, PlantSensorEntry
+from src.model.plant_configuration import PlantConfiguration
 
 from datetime import datetime
-from tinydb import table
+from tinydb import table, Query
 
 from src.waterSystem.components import Relay
 
@@ -17,18 +19,16 @@ from src.waterSystem.components import Relay
 ########################################################
 
 
-def is_moisture_level_low(plant: table.Document, plant_master_data: table.Document) -> bool:
+def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
     """ compare current mositure level with configured max and min moisture values"""
     logger = logging.getLogger('waterSystem')
-    if 'max_moisture' in plant_master_data:
-        max_moisture = plant_master_data['max_moisture']
-        min_moisture = plant_master_data['min_moisture']
-        moisture = plant['moisture']
+    if plant_master_data.max_moisture and plant_master_data.min_moisture:
+        max_moisture = plant_master_data.max_moisture
+        min_moisture = plant_master_data.min_moisture
+        moisture = plant.mositure
 
         if moisture > max_moisture:
-            plant_name = plant['name']
-            plant_id = plant['id']
-            logger.warning(f'Moisture of {plant_name} (Id: {plant_id}) is to high!')
+            logger.warning(f'Moisture of {plant.name} (ID: {plant.id}) is to high!')
 
         if moisture < min_moisture:
             return True
@@ -36,18 +36,16 @@ def is_moisture_level_low(plant: table.Document, plant_master_data: table.Docume
     return False
 
 
-def is_conductivity_level_low(plant: table.Document, plant_master_data: table.Document) -> bool:
+def is_conductivity_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
     """ compare current conductivity level with configured max and min conductivity values"""
     logger = logging.getLogger('waterSystem')
-    if 'max_conductivity' in plant_master_data:
-        max_conductivity = plant_master_data['max_conductivity']
-        min_conductivity = plant_master_data['min_conductivity']
-        conductivity = plant['conductivity']
+    if plant_master_data.max_conductivity and plant_master_data.min_conductivity:
+        max_conductivity = plant_master_data.max_conductivity
+        min_conductivity = plant_master_data.min_conductivity
+        conductivity = plant.conductivity
 
         if conductivity > max_conductivity:
-            plant_name = plant['name']
-            plant_id = plant['id']
-            logger.warning(f'Conductivity of {plant_name} (Id: {plant_id}) is to high!')
+            logger.warning(f'Conductivity of {plant.name} (ID: {plant.id}) is to high!')
 
         if conductivity < min_conductivity:
             return True
@@ -61,13 +59,13 @@ def is_conductivity_level_low(plant: table.Document, plant_master_data: table.Do
 ###############################################
 
 
-def find_latest_sensor_history_entry(sensor_history_db: table.Table) -> Union[table.Document, None]:
+def find_latest_sensor_history_entry(sensor_history_db: table.Table) -> Union[PlantSensorEntry, None]:
     lastest_entry = None
     for entry in sensor_history_db:
         if lastest_entry is None: # first entry
-            lastest_entry = entry
-        elif datetime.fromisoformat(entry['ts']) > datetime.fromisoformat(lastest_entry['ts']):
-            lastest_entry = entry
+            lastest_entry = PlantSensorEntry.parse_obj(entry)
+        elif datetime.fromisoformat(entry['ts']) > datetime.fromisoformat(lastest_entry.ts):
+            lastest_entry = PlantSensorEntry.parse_obj(entry)
     return lastest_entry
 
 
@@ -78,15 +76,15 @@ def run_water_check(sensor_history_db: table.Table, master_db_plants_conf: table
     """
     logger = logging.getLogger('waterSystem')
     latest_data = find_latest_sensor_history_entry(sensor_history_db)
-    for plant in latest_data['plants']:
-        plant_master_data = master_db_plants_conf.get(doc_id=int(plant['id']))
+    for plant in latest_data.plants:
+        master_data_query = Query()
+        plant_master_data = master_db_plants_conf.get(master_data_query.id == plant.id)
+        plant_master_data_obj = PlantConfiguration.parse_obj(plant_master_data)
 
-        if plant_master_data is not None and (is_moisture_level_low(plant, plant_master_data) or is_conductivity_level_low(plant, plant_master_data)):
-            plant_config = master_db_plants_conf.get(doc_id=int(plant['id']))
-            run_water_pump(plant_config['relay_pin'], plant_config['water_duration_sec'], plant_config['water_iterations'])
+        if plant_master_data is not None and (is_moisture_level_low(plant, plant_master_data_obj) or is_conductivity_level_low(plant, plant_master_data_obj)):
+            logger.info(f'Running water pump for {plant_master_data_obj.plant}')
+            run_water_pump(plant_master_data_obj.relay_pin, plant_master_data_obj.water_duration_sec, plant_master_data_obj.water_iterations)
             
-            plant_name = plant_config['plant']
-            logger.info(f'Run water pump for {plant_name}')
 
 
 ######################################

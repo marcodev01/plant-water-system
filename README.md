@@ -37,5 +37,3 @@ Allow sibling packages in python with virtual environment: [stack overflow threa
 
 # TODO
 * Configuration App
-
-##### Author: Marc Touw

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
+import uuid 
 from typing import Optional
 
 from fastapi import FastAPI
-from tinydb.queries import Query, where
+from tinydb.queries import where, Query
+from datetime import datetime
 from src.model.plant_configuration import PlantConfiguration
 from src.model.app_type import AppType
 from src.db.db_adapter import DbAdapter
-from src.api.api_helper import get_water_system_log_fragment, get_api_log_fragment
 from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system
 
 import logging
@@ -49,9 +50,9 @@ def api_status(app_type: AppType):
 @app.get("/app/log")
 def get_app_log_fragment(app_type: AppType = AppType.water_app):
     if app_type is AppType.water_app:
-        return get_water_system_log_fragment(10)
+        return get_log_fragment(10, '../log/api.log')
     if app_type is AppType.api:
-        return get_api_log_fragment(10)
+        return get_log_fragment(10, '../log/water_system.log')
 
 @app.get("/water-system/job") 
 def change_plant_water_system_job_status(state: bool):
@@ -67,21 +68,51 @@ def get_all_plants_configurations():
     return plants_configuration.all()
 
 @app.put("/plants/configurations/{plant_id}")
-def change_plant_configuration(plant_id: int, plant_conf: PlantConfiguration):
-    plants_configuration.update(plant_conf.dict(), doc_ids=[plant_id])
+def change_plant_configuration(plant_id: str, plant_conf: PlantConfiguration):
+    plants_configuration.update(plant_conf.dict(), where('id') == plant_id)
 
 @app.post("/plants/configurations")
 def add_plant_configuration(plant_conf: PlantConfiguration):
+    plant_conf.id = uuid.uuid4().hex # generate uniqe id on server side
     plants_configuration.insert(plant_conf.dict())
 
 @app.delete("/plants/configurations/{plant_id}")
-def delete_plant_configuration(plant_id: int):
+def delete_plant_configuration(plant_id: str):
     plants_configuration.remove(where('id') == plant_id)
 
 @app.get("/plants/history")
 def get_plant_history(range_start_date: Optional[str], range_end_date: Optional[str]):
-    pass
+    history_entry = Query()
+
+    if range_start_date and range_end_date:
+        sensor_history.search(history_entry.ts.test(test_history_range, range_start_date, range_end_date))
+    elif range_start_date:
+        sensor_history.search(history_entry.ts.test(test_history_range_start, range_start_date))
+    elif range_end_date:
+        sensor_history.search(history_entry.ts.test(test_history_range_end, range_end_date))
+    else:
+        sensor_history.all()
 
 
+
+####################
+# helper functions #
+####################
+
+def test_history_range(val: str, start: str, end: str):
+    return datetime.fromisoformat(val) > datetime.fromisoformat(start) and datetime.fromisoformat(val) < datetime.fromisoformat(end)
+
+def test_history_range_start(val: str, start: str):
+    return datetime.fromisoformat(val) > datetime.fromisoformat(start)
+
+def test_history_range_end(val: str, end: str):
+    return datetime.fromisoformat(val) < datetime.fromisoformat(end)
+
+def get_log_fragment(nmb_lines: int, log_file_path: str) -> str:
+    log_fragment = ''
+    with open(log_file_path) as file:
+        for line in (file.readlines() [-nmb_lines:]): 
+            log_fragment = log_fragment + line + '\n'
+    return log_fragment
 
 
