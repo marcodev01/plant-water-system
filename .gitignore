@@ -1,8 +1,8 @@
-#ignore all caches
 */__pycache__
 *.pyc
 .vscode
 *.log
+*.sh
 pyrightconfig.json
 src/db/*.json
 venv
