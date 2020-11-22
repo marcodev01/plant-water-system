@@ -55,7 +55,7 @@ def get_app_log_fragment(app_type: AppType = AppType.water_app):
         return get_log_fragment(10, '../log/water_system.log')
 
 @app.get("/water-system/job") 
-def change_plant_water_system_job_status(state: bool):
+def pause_resume_water_system(state: bool):
     # todo: return 500 if already running
     if state:
         resume_water_system()
@@ -99,13 +99,13 @@ def get_plant_history(range_start_date: Optional[str], range_end_date: Optional[
 # helper functions #
 ####################
 
-def test_history_range(val: str, start: str, end: str):
+def test_history_range(val: str, start: str, end: str) -> bool:
     return datetime.fromisoformat(val) > datetime.fromisoformat(start) and datetime.fromisoformat(val) < datetime.fromisoformat(end)
 
-def test_history_range_start(val: str, start: str):
+def test_history_range_start(val: str, start: str) -> bool:
     return datetime.fromisoformat(val) > datetime.fromisoformat(start)
 
-def test_history_range_end(val: str, end: str):
+def test_history_range_end(val: str, end: str) -> bool:
     return datetime.fromisoformat(val) < datetime.fromisoformat(end)
 
 def get_log_fragment(nmb_lines: int, log_file_path: str) -> str:

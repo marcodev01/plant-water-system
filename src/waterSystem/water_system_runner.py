@@ -10,6 +10,9 @@ from src.db.db_adapter import DbAdapter
 import logging
 
 
+QUERY_SENSOR_VALUES_INTERVAL_MIN = 42
+RUN_WATER_SYSTEM_INTERVAL_MIN = 60
+
 # log configurations
 logging.basicConfig(filename='../log/water_system.log',
                     filemode='a', 
@@ -59,7 +62,7 @@ def job_state_listener(event) -> None:
 
 if __name__ == '__main__':
     print('water system script is running...')
-    sched.add_job(query_sensor_values, 'interval', minutes=42, id='query_sensor_values')
-    sched.add_job(run_water_system, 'interval', minutes=60, id='run_water_check')
+    sched.add_job(query_sensor_values, 'interval', minutes=QUERY_SENSOR_VALUES_INTERVAL_MIN, id='query_sensor_values')
+    sched.add_job(run_water_system, 'interval', minutes=RUN_WATER_SYSTEM_INTERVAL_MIN, id='run_water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()
