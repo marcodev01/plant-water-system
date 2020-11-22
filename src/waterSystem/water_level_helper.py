@@ -25,7 +25,7 @@ def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -
     if plant_master_data.max_moisture and plant_master_data.min_moisture:
         max_moisture = plant_master_data.max_moisture
         min_moisture = plant_master_data.min_moisture
-        moisture = plant.mositure
+        moisture = plant.moisture
 
         if moisture > max_moisture:
             logger.warning(f'Moisture of {plant.name} (ID: {plant.id}) is to high!')
@@ -97,6 +97,7 @@ def run_water_pump(pin: int, pump_duration_sec: float, number_of_runs: int) -> N
     relay = Relay(pin)
 
     for _ in range(number_of_runs):
+        time.sleep(1) # default timeout per iteration
         relay.on()
         time.sleep(pump_duration_sec)
         relay.off()

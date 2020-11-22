@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class Plant(BaseModel):
     id: str
     name: str
-    mositure: int
+    moisture: int
     conductivity: Optional[int] = None
     sunlight: Optional[int] = None
     temperature: Optional[float] = None
