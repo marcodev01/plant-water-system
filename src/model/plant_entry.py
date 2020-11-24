@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -16,7 +17,7 @@ class Plant(BaseModel):
 
 
 class PlantSensorEntry(BaseModel):
-    ts: str
+    ts: datetime
     plants: List[Plant]
     temperature: float
     humidity: float

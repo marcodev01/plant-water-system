@@ -28,12 +28,12 @@ def persist_sensor_values(sensor_history_db: table.Table, master_db_plants_conf:
     persist sensor value to sensor history database
     specific sensor parameters/configurations are read out from master database (plants configurations)
     """
-    logger = logging.getLogger('waterSystem')
+    logger = logging.getLogger('src.waterSystem')
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
     sunlight_sensor = SunlightSensor()
     
     plant_sensor_entry_obj = PlantSensorEntry(
-        ts=datetime.now().isoformat(timespec='seconds'),
+        ts=datetime.now(),
         plants=create_plants_entries_list(master_db_plants_conf),
         temperature=temp_sensor.read_temperature(),
         humidity=temp_sensor.read_humidity(),

@@ -19,7 +19,7 @@ logging.basicConfig(filename='../log/water_system.log',
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     datefmt='%d-%m-%y %H:%M:%S', 
                     level=logging.INFO)
-logger = logging.getLogger('waterSystem')
+logger = logging.getLogger('src.waterSystem')
 
 # history db initialisation
 plant_db = DbAdapter().plant_db
