@@ -33,7 +33,7 @@ def persist_sensor_values(sensor_history_db: table.Table, master_db_plants_conf:
     sunlight_sensor = SunlightSensor()
     
     plant_sensor_entry_obj = PlantSensorEntry(
-        ts=datetime.now(),
+        ts=datetime.now().isoformat(timespec='seconds'),
         plants=create_plants_entries_list(master_db_plants_conf),
         temperature=temp_sensor.read_temperature(),
         humidity=temp_sensor.read_humidity(),

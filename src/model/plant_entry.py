@@ -17,7 +17,7 @@ class Plant(BaseModel):
 
 
 class PlantSensorEntry(BaseModel):
-    ts: datetime
+    ts: str
     plants: List[Plant]
     temperature: float
     humidity: float

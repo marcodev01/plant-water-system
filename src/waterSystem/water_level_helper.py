@@ -64,7 +64,7 @@ def find_latest_sensor_history_entry(sensor_history_db: table.Table) -> Union[Pl
     for entry in sensor_history_db:
         if lastest_entry is None: # first entry
             lastest_entry = PlantSensorEntry.parse_obj(entry)
-        elif datetime.fromisoformat(entry['ts']) > lastest_entry.ts:
+        elif datetime.fromisoformat(entry['ts']) > datetime.fromisoformat(lastest_entry.ts):
             lastest_entry = PlantSensorEntry.parse_obj(entry)
     return lastest_entry
 
