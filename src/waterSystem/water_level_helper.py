@@ -81,8 +81,14 @@ def run_water_check(sensor_history_db: table.Table, master_db_plants_conf: table
         plant_master_data = master_db_plants_conf.get(master_data_query.id == plant.id)
         plant_master_data_obj = PlantConfiguration.parse_obj(plant_master_data)
 
-        if plant_master_data is not None and (is_moisture_level_low(plant, plant_master_data_obj) or is_conductivity_level_low(plant, plant_master_data_obj)):
-            logger.info(f'[-WATERING-] Running water pump ({plant_master_data_obj.relay_pin}) for {plant_master_data_obj.plant}. Moisture: {plant.moisture} % (min: {plant_master_data_obj.min_moisture}) / Conductivity: {plant.conductivity} µS/cm (min: {plant_master_data_obj.min_conductivity})')
+        has_low_moisture_level = is_moisture_level_low(plant, plant_master_data_obj)
+        has_low_conductivity_level = is_conductivity_level_low(plant, plant_master_data_obj)
+
+        if plant_master_data is not None and (has_low_moisture_level or has_low_conductivity_level):
+            if has_low_moisture_level:
+                logger.info(f'[-WATERING-] Running water pump ({plant_master_data_obj.relay_pin}) for {plant_master_data_obj.plant}. Moisture: {plant.moisture} % (min: {plant_master_data_obj.min_moisture})')
+            if has_low_conductivity_level:
+                logger.info(f'[-WATERING-] Running water pump ({plant_master_data_obj.relay_pin}) for {plant_master_data_obj.plant}. Conductivity: {plant.conductivity} µS/cm (min: {plant_master_data_obj.min_conductivity})')
             run_water_pump(plant_master_data_obj.relay_pin, plant_master_data_obj.water_duration_sec, plant_master_data_obj.water_iterations)
             
 

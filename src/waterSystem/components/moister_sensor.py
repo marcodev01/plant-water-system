@@ -31,15 +31,15 @@ class MoistureSensor:
         Get the moisture strength value/voltage
 
         voltage, in mV [millivolt = 0.001 V]
-        Moisture Sensor - Min: 0   Max: 1800
-        Capacitive Moisture Sensor - Min: 2020   Max: 1300
+        Moisture Sensor - Min: 0  Max: ~2200
+        Capacitive Moisture Sensor - Min: 2020  Max: ~1300
 
         Returns:
             (int): mosture in %
         """
 
         min_moisture = 0 if self._sensor_type == MoistureSensorType.STANDARD.value else 2020
-        max_moisture = 1800 if self._sensor_type == MoistureSensorType.STANDARD.value else 1300
+        max_moisture = 2200 if self._sensor_type == MoistureSensorType.STANDARD.value else 1300
         
 
         value = self.adc.read_voltage(self._channel)
