@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from src.model.water_system_state import WaterSystemState
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
 from src.waterSystem.water_level_helper import run_water_check
@@ -25,8 +26,7 @@ def run_water_system() -> None:
     run_water_check()
 
 
-def get_state_of_water_system() -> int:
-    """STATE_STOPPED = 0 / STATE_RUNNING = 1 / STATE_PAUSED = 2"""
+def get_state_of_water_system() -> WaterSystemState:
     return sched.state
 
 def pause_water_system() -> None:

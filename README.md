@@ -38,3 +38,5 @@ All actions, api accesses and errors are [logged](https://docs.python.org/3/libr
 
 # Setup dev environment
 Allow sibling packages in python with virtual environment: [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
+
+Start API server in dev environment: ```uvicorn api:app --reload```
