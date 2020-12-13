@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import time
 import logging
+import time
 
 from typing import Union
 from src.model.plant_entry import Plant, PlantSensorEntry
@@ -12,7 +12,7 @@ from tinydb import table, Query
 
 from src.waterSystem.components import Relay
 
-
+logger = logging.getLogger('water.system')
 
 ########################################################
 # helper functions to check water level related values #
@@ -21,7 +21,6 @@ from src.waterSystem.components import Relay
 
 def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
     """ compare current mositure level with configured max and min moisture values"""
-    logger = logging.getLogger('src.waterSystem')
     if plant_master_data.max_moisture and plant_master_data.min_moisture:
         max_moisture = plant_master_data.max_moisture
         min_moisture = plant_master_data.min_moisture
@@ -38,7 +37,6 @@ def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -
 
 def is_conductivity_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
     """ compare current conductivity level with configured max and min conductivity values"""
-    logger = logging.getLogger('src.waterSystem')
     if plant_master_data.max_conductivity and plant_master_data.min_conductivity:
         max_conductivity = plant_master_data.max_conductivity
         min_conductivity = plant_master_data.min_conductivity
@@ -74,7 +72,6 @@ def run_water_check(sensor_history_db: table.Table, master_db_plants_conf: table
     Run check for current water levels of all configured plants 
     and run water pumps for plants with low water level 
     """
-    logger = logging.getLogger('src.waterSystem')
     latest_data = find_latest_sensor_history_entry(sensor_history_db)
     for plant in latest_data.plants:
         master_data_query = Query()

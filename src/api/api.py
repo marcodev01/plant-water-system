@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from src.log.logger import setup_logger
 from src.model.plant_entry import PlantSensorEntry
 import uuid 
 from uuid import UUID
@@ -12,15 +13,9 @@ from src.model.app_type import AppType
 from src.db.db_adapter import DbAdapter
 from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system
 
-import logging
-
-# log configurations
-logging.basicConfig(filename='../log/api.log',
-                    filemode='a', 
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%m-%y %H:%M:%S', 
-                    level=logging.INFO)
-logger = logging.getLogger('src.api')
+# setup uvicorn loggers
+setup_logger('uvicorn.error', '../log/api.log')
+setup_logger('uvicorn.access', '../log/api.log')
 
 # history db initialisation
 plant_db = DbAdapter().plant_db

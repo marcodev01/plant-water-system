@@ -6,20 +6,15 @@ from src.waterSystem.water_level_helper import run_water_check
 from src.waterSystem.water_system_db_helper import persist_sensor_values
 
 from src.db.db_adapter import DbAdapter
+from src.log.logger import setup_logger
 
-import logging
-
+# setup custom logger
+setup_logger('water.system', '../log/water_system.log')
+# setup apscheduler logger
+setup_logger('apscheduler', '../log/water_system.log')
 
 QUERY_SENSOR_VALUES_INTERVAL_MIN = 42
 RUN_WATER_SYSTEM_INTERVAL_MIN = 60
-
-# log configurations
-logging.basicConfig(filename='../log/water_system.log',
-                    filemode='a', 
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    datefmt='%d-%m-%y %H:%M:%S', 
-                    level=logging.INFO)
-logger = logging.getLogger('src.waterSystem')
 
 # history db initialisation
 plant_db = DbAdapter().plant_db
@@ -39,7 +34,7 @@ def run_water_system() -> None:
 
 
 def get_state_of_water_system() -> int:
-    # STATE_STOPPED = 0 / STATE_RUNNING = 1 / STATE_PAUSED = 2
+    """STATE_STOPPED = 0 / STATE_RUNNING = 1 / STATE_PAUSED = 2"""
     return sched.state
 
 def pause_water_system() -> None:

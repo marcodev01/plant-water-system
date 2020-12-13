@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import logging
-
 from tinydb.queries import Query
 from src.model.plant_entry import PlantSensorEntry, Plant
 from src.model.plant_configuration import PlantConfiguration
@@ -16,7 +15,7 @@ from src.waterSystem.components import MoistureSensor
 from src.waterSystem.components import MifloraSensor
 from src.waterSystem.components import SunlightSensor
 
-
+logger = logging.getLogger('water.system')
 
 ##############################################################
 # helper functions for persisting to sensor history database #
@@ -28,7 +27,7 @@ def persist_sensor_values(sensor_history_db: table.Table, master_db_plants_conf:
     persist sensor value to sensor history database
     specific sensor parameters/configurations are read out from master database (plants configurations)
     """
-    logger = logging.getLogger('src.waterSystem')
+    
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
     sunlight_sensor = SunlightSensor()
     
