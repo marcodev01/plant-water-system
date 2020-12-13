@@ -1,25 +1,27 @@
-# Chilli plant water system
+# Chilli Plant Water System
 
-The chilli water plant system is controlled by an Raspbery PI 3 with the [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/) 
-and several connected sensors of Grove's ecosystem as well as Xiaomi Mi Flora Plant Sensor. The water system itself is electrically opererated by 5V water pumps and controlled with relays.
-The system is consiting of following applications:
+The "chilli" plant water system is controlled by an Raspbery PI 3 with the [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/) 
+and several connected sensors of Grove's ecosystem as well as Xiaomi Mi Flora Plant Sensor. The irrigation is electrically opererated by 5V water pumps which are controlled by 3.3V and 5V relays.
+Application Architecture:
 
-* Water system runner - *written in phyton 3.7*
-* TODO: App
+* Water System Runner
+* Plant Water System API
+* Plant Water Admin APP (Progressive Web App) **TODO**
 
 ## Water System Runner
-The water system runner is a simple Python application which reads values from various sensors - for certain sensor values it converts and round them to legbible units.
-Finally, the values are persited with a **time stamp** into a [tinyDB](https://tinydb.readthedocs.io/en/stable/) table named *sensor_history*.
+The water system runner is a simple Python 3.7 application running two parallel jobs scheduled with the Python library [Advanced Python Scheduler](https://apscheduler.readthedocs.io/en/stable/).
 
-In a second step the most recent values were read from *sensor_history* and checked with the limit settings specified in *master_db*. 
-In addition the sensor channels, relay pins and watering duration/iteration is configured in *master_db* database.
+The first job is reading and persisting values from various sensors with a **time stamp** into a [tinyDB](https://tinydb.readthedocs.io/en/stable/) table named *sensor_history*. _Note: For certain sensor values it converts and round them to legbible units_. 
 
-The executions for reading and persisting the sensor values as well as checks for watering are scheduled with the Python library [Advanced Python Scheduler](https://apscheduler.readthedocs.io/en/stable/)
+The second job is reading the most recent data entry (by time stamp) from table *sensor_history* and compares them with the defined threshold values. For plants that fall below this threshold value the water pump is started. The threshold values are defined in a table named *plants_configuration* among other configurations for sensor channels, relay pins and watering duration/iteration.
 
 All actions, warnings and errors are [logged](https://docs.python.org/3/library/logging.html) in *water_system.log* 
 
 ## API
-An interface for a REST-API is implemented with [FastAPI](https://fastapi.tiangolo.com/)
+An interface for the Chilli Plant Water System REST-API is implemented with [FastAPI](https://fastapi.tiangolo.com/). 
+It provides Endpoints to manage plant configurtions, read logs, start/pause the water system... See API documentation: http://{URI}/docs 
+
+All actions, api accesses and errors are [logged](https://docs.python.org/3/library/logging.html) in *api.log* 
 
 ### Libraries
  * Groove Py: https://github.com/Seeed-Studio/grove.py
@@ -34,6 +36,3 @@ An interface for a REST-API is implemented with [FastAPI](https://fastapi.tiango
 
 # Setup dev environment
 Allow sibling packages in python with virtual environment: [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
-
-# TODO
-* Configuration App
