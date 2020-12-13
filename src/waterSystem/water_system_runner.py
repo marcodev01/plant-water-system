@@ -30,10 +30,10 @@ def get_state_of_water_system() -> WaterSystemState:
     return sched.state
 
 def pause_water_system() -> None:
-    return sched.pause()
+    sched.pause()
 
 def resume_water_system() -> None:
-    return sched.resume()
+    sched.resume()
     
 
 def job_state_listener(event) -> None:
