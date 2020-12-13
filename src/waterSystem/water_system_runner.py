@@ -3,9 +3,8 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
 from src.waterSystem.water_level_helper import run_water_check
-from src.waterSystem.water_system_db_helper import persist_sensor_values
+from src.waterSystem.water_system_db_helper import query_and_persist_sensor_values
 
-from src.db.db_adapter import DbAdapter
 from src.log.logger import setup_logger
 
 # setup custom logger
@@ -16,21 +15,14 @@ setup_logger('apscheduler', '../log/water_system.log')
 QUERY_SENSOR_VALUES_INTERVAL_MIN = 42
 RUN_WATER_SYSTEM_INTERVAL_MIN = 60
 
-# history db initialisation
-plant_db = DbAdapter().plant_db
-sensor_history = plant_db.table('sensor_history')
-# master data db initialisation
-master_data_db = DbAdapter().master_data_db
-plants_configuration = master_data_db.table('plants_configuration')
-
 # create scheduler
 sched = BlockingScheduler()
 
-def query_sensor_values() -> None:
-    persist_sensor_values(sensor_history, plants_configuration)
+def run_query_and_persist_sensor_values() -> None:
+    query_and_persist_sensor_values()
 
 def run_water_system() -> None:
-    run_water_check(sensor_history, plants_configuration)
+    run_water_check()
 
 
 def get_state_of_water_system() -> int:
@@ -46,9 +38,9 @@ def resume_water_system() -> None:
 
 def job_state_listener(event) -> None:
     if event.code == EVENT_JOB_ERROR:
-        print(f'EVENT_JOB_ERROR: {event.exception}')
+        print(f'EVENT_JOB_ERROR {event}. EXCEPTION: {event.exception}')
     if event.code == EVENT_JOB_MISSED:
-        print('EVENT_JOB_MISSED!')
+        print(f'EVENT_JOB_MISSED! {event}')
 
 
 #####################
@@ -57,7 +49,7 @@ def job_state_listener(event) -> None:
 
 if __name__ == '__main__':
     print('water system script is running...')
-    sched.add_job(query_sensor_values, 'interval', minutes=QUERY_SENSOR_VALUES_INTERVAL_MIN, id='query_sensor_values')
-    sched.add_job(run_water_system, 'interval', minutes=RUN_WATER_SYSTEM_INTERVAL_MIN, id='run_water_check')
+    sched.add_job(run_query_and_persist_sensor_values, 'interval', minutes=QUERY_SENSOR_VALUES_INTERVAL_MIN, id='query_and_persist_sensor_values')
+    sched.add_job(run_water_system, 'interval', minutes=RUN_WATER_SYSTEM_INTERVAL_MIN, id='water_check')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
     sched.start()

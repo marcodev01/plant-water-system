@@ -8,7 +8,8 @@ from src.model.plant_entry import Plant, PlantSensorEntry
 from src.model.plant_configuration import PlantConfiguration
 
 from datetime import datetime
-from tinydb import table, Query
+from tinydb import Query
+from src.db.db_adapter import DbAdapter, SENSOR_HISTORY_TABLE_NAME, PLANTS_CONFIGURATION_TABLE_NAME
 
 from src.waterSystem.components import Relay
 
@@ -19,11 +20,11 @@ logger = logging.getLogger('water.system')
 ########################################################
 
 
-def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
+def __is_moisture_level_low(plant: Plant, plant_configuration_obj: PlantConfiguration) -> bool:
     """ compare current mositure level with configured max and min moisture values"""
-    if plant_master_data.max_moisture and plant_master_data.min_moisture:
-        max_moisture = plant_master_data.max_moisture
-        min_moisture = plant_master_data.min_moisture
+    if plant_configuration_obj.max_moisture and plant_configuration_obj.min_moisture:
+        max_moisture = plant_configuration_obj.max_moisture
+        min_moisture = plant_configuration_obj.min_moisture
         moisture = plant.moisture
 
         if moisture > max_moisture:
@@ -35,11 +36,11 @@ def is_moisture_level_low(plant: Plant, plant_master_data: PlantConfiguration) -
     return False
 
 
-def is_conductivity_level_low(plant: Plant, plant_master_data: PlantConfiguration) -> bool:
+def __is_conductivity_level_low(plant: Plant, plant_configuration_obj: PlantConfiguration) -> bool:
     """ compare current conductivity level with configured max and min conductivity values"""
-    if plant_master_data.max_conductivity and plant_master_data.min_conductivity:
-        max_conductivity = plant_master_data.max_conductivity
-        min_conductivity = plant_master_data.min_conductivity
+    if plant_configuration_obj.max_conductivity and plant_configuration_obj.min_conductivity:
+        max_conductivity = plant_configuration_obj.max_conductivity
+        min_conductivity = plant_configuration_obj.min_conductivity
         conductivity = plant.conductivity
 
         if conductivity > max_conductivity:
@@ -57,7 +58,12 @@ def is_conductivity_level_low(plant: Plant, plant_master_data: PlantConfiguratio
 ###############################################
 
 
-def find_latest_sensor_history_entry(sensor_history_db: table.Table) -> Union[PlantSensorEntry, None]:
+def __find_latest_sensor_history_entry() -> Union[PlantSensorEntry, None]:
+
+    # history db connection
+    plant_db = DbAdapter().plant_db
+    sensor_history_db = plant_db.table(SENSOR_HISTORY_TABLE_NAME)
+
     lastest_entry = None
     for entry in sensor_history_db:
         if lastest_entry is None: # first entry
@@ -67,19 +73,24 @@ def find_latest_sensor_history_entry(sensor_history_db: table.Table) -> Union[Pl
     return lastest_entry
 
 
-def run_water_check(sensor_history_db: table.Table, master_db_plants_conf: table.Table) -> None:
+def run_water_check() -> None:
     """ 
     Run check for current water levels of all configured plants 
     and run water pumps for plants with low water level 
     """
-    latest_data = find_latest_sensor_history_entry(sensor_history_db)
+
+    # master data db connection
+    master_data_db = DbAdapter().master_data_db
+    plants_master_data_db = master_data_db.table(PLANTS_CONFIGURATION_TABLE_NAME)
+
+    latest_data = __find_latest_sensor_history_entry()
     for plant in latest_data.plants:
         master_data_query = Query()
-        plant_master_data = master_db_plants_conf.get(master_data_query.id == plant.id)
+        plant_master_data = plants_master_data_db.get(master_data_query.id == plant.id)
         plant_master_data_obj = PlantConfiguration.parse_obj(plant_master_data)
 
-        has_low_moisture_level = is_moisture_level_low(plant, plant_master_data_obj)
-        has_low_conductivity_level = is_conductivity_level_low(plant, plant_master_data_obj)
+        has_low_moisture_level = __is_moisture_level_low(plant, plant_master_data_obj)
+        has_low_conductivity_level = __is_conductivity_level_low(plant, plant_master_data_obj)
 
         if plant_master_data is not None and (has_low_moisture_level or has_low_conductivity_level):
             if has_low_moisture_level:

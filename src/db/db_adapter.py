@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from tinydb import TinyDB
 
+SENSOR_HISTORY_TABLE_NAME = 'sensor_history'
+PLANTS_CONFIGURATION_TABLE_NAME = 'plants_configuration'
 
 class DbAdapter(object):
     """ Database adapter to create a singelton TinyDB instance / connection """
