@@ -19,7 +19,9 @@ All actions, warnings and errors are [logged](https://docs.python.org/3/library/
 
 ## API
 An interface for the Chilli Plant Water System REST-API is implemented with [FastAPI](https://fastapi.tiangolo.com/). 
-It provides Endpoints to manage plant configurtions, read logs, start/pause the water system... See API documentation: http://{URI}/docs 
+It provides Endpoints to manage plant configurtions, read logs, start/pause the water system... See API documentation: http://{URI}/docs.
+
+The API is operated on a ASGI server by [uvicorn](https://www.uvicorn.org/)
 
 All actions, api accesses and errors are [logged](https://docs.python.org/3/library/logging.html) in *api.log* 
 
