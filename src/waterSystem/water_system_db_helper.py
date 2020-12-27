@@ -7,9 +7,9 @@ from src.model.plant_configuration import PlantConfiguration
 
 from typing import List
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from tinydb import table
-from src.db.db_adapter import DbAdapter, SENSOR_HISTORY_TABLE_NAME, PLANTS_CONFIGURATION_TABLE_NAME
+from src.db.db_adapter import DbAdapter, SENSOR_HISTORY_TABLE_NAME, PLANTS_CONFIGURATION_TABLE_NAME, SCHEDULED_JOBS_CONFIGURATION_TABLE_NAME
 
 from src.waterSystem.components import TemperatureHumiditySensor, TempHumSensorType
 from src.waterSystem.components import MoistureSensor
@@ -99,3 +99,24 @@ def __plant_entry_sorter(plant: Plant, plants_master_data_db: table.Table) -> in
         return plant_seq
     else:
         return -1
+
+
+#########################################################
+# helper functions for clean up sensor history database #
+#########################################################
+
+def clean_up_plant_history() -> None:
+    # history db connection
+    plant_db = DbAdapter().plant_db
+    sensor_history_db = plant_db.table(SENSOR_HISTORY_TABLE_NAME)
+    # master db connection
+    master_data_db = DbAdapter().master_data_db
+    plants_master_data_db = master_data_db.table(SCHEDULED_JOBS_CONFIGURATION_TABLE_NAME)
+
+    max_months = plants_master_data_db.get(doc_id=1)['max_plant_history_months']
+    min_date = datetime.now() - timedelta(weeks=max_months*4)
+    sensor_entry = Query()
+
+    # delete all entries which are older than max_months
+    test_max_entry= lambda plant_history_entry_ts: datetime.fromisoformat(plant_history_entry_ts) < min_date 
+    sensor_history_db.remove(sensor_entry.ts.test(test_max_entry))
