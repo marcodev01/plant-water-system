@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel

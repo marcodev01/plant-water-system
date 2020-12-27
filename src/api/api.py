@@ -116,7 +116,7 @@ def update_plant_configuration(
     plant_conf: PlantConfiguration = Body(..., title="updated plant configuration", example={"id": "abc123", "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })
 ):
     """ Updates an existing plant configuration"""
-    plants_configuration.update(plant_conf.dict(), where('id') == plant_id) # TODO: handle if requested plant not available
+    plants_configuration.update(plant_conf.dict(exclude_none=True), where('id') == plant_id) # TODO: handle if requested plant not available
 
 
 @app.post("/plants/configuration", response_model=PlantConfiguration, status_code=status.HTTP_201_CREATED, tags=["plants configuration"])
@@ -127,7 +127,7 @@ def add_plant_configuration(plant_conf: PlantConfiguration = Body(..., title="ne
     Note: **uuid** for newly created plant configuration is **generated on server side**. The Response contains the new plant configuration including generated uuid.
     """
     plant_conf.id = uuid.uuid4().hex # generate uniqe id on server side
-    plants_configuration.insert(plant_conf.dict())
+    plants_configuration.insert(plant_conf.dict(exclude_none=True))
     return plant_conf
 
 

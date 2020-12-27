@@ -47,7 +47,7 @@ def query_and_persist_sensor_values() -> None:
     )
 
     # query and save values with time stamp to db
-    sensor_history_db.insert(plant_sensor_entry_obj.dict())
+    sensor_history_db.insert(plant_sensor_entry_obj.dict(exclude_none=True))
     logger.info('Sensor values successfully queried and persistet in db')
 
 
