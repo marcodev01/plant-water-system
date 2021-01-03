@@ -120,3 +120,5 @@ def clean_up_plant_history() -> None:
     # delete all entries which are older than max_months
     test_max_entry= lambda plant_history_entry_ts: datetime.fromisoformat(plant_history_entry_ts) < min_date 
     sensor_history_db.remove(sensor_entry.ts.test(test_max_entry))
+    
+    logger.info(f'[-Clean up plant history-] Sucessfully cleared plant history entries older than: {min_date}')
