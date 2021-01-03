@@ -30,8 +30,7 @@ app = FastAPI()
 
 @app.get("/app/state", tags=["app"])
 def api_status(
-    app_type: AppType = FastAPIQuery(..., title="ApplicationType", 
-    description="Application type to be queried: `water_app` OR `api`")
+    app_type: AppType = FastAPIQuery(..., title="ApplicationType", description="Application type to be queried: `water_app` OR `api`")
 ):
     """ 
     Get the current state of app:
@@ -62,17 +61,18 @@ def api_status(
 
 
 @app.get("/app/log", tags=["app"])
-def get_app_log_fragment(app_type: AppType = FastAPIQuery(
-    AppType.water_app, title="ApplicationType", description="Log file of application type: `water_app` OR `api`")
+def get_app_log_fragment(
+    app_type: AppType = FastAPIQuery(AppType.water_app, title="ApplicationType", description="Log file of application type: `water_app` OR `api`"),
+    log_size: int = FastAPIQuery(20, title="LogSize", description="Number of the last log entries to request")
 ):
     """
     Get log file entries of app.
     By default a fragment of the latest **10 log entries** will be supplied
     """
     if app_type is AppType.water_app:
-        return get_log_fragment(10, '../log/api.log')
+        return get_log_fragment(log_size, '../log/water_system.log')
     if app_type is AppType.api:
-        return get_log_fragment(10, '../log/water_system.log')
+        return get_log_fragment(log_size, '../log/api.log')
 
 
 @app.get("/water-system/job", tags=["app"]) 
@@ -180,7 +180,7 @@ def get_log_fragment(nmb_lines: int, log_file_path: str) -> str:
     log_fragment = ''
     with open(log_file_path) as file:
         for line in (file.readlines() [-nmb_lines:]): 
-            log_fragment = log_fragment + line + '\n'
+            log_fragment = log_fragment + line
     return log_fragment
 
 
