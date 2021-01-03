@@ -2,7 +2,6 @@
 *.pyc
 .vscode
 *.log
-*.sh
 pyrightconfig.json
 src/db/*.json
 venv
