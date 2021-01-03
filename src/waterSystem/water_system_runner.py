@@ -2,6 +2,7 @@
 
 from src.model.water_system_state import WaterSystemState
 from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
 from src.waterSystem.water_level_helper import run_water_check
 from src.waterSystem.water_system_db_helper import query_and_persist_sensor_values, clean_up_plant_history
@@ -17,8 +18,8 @@ QUERY_SENSOR_VALUES_INTERVAL_MIN = 42
 RUN_WATER_SYSTEM_INTERVAL_MIN = 60
 RUN_PLANT_DB_CLEAN_UP_INTERVAL_WEEKS = 2
 
-# create scheduler
-sched = BlockingScheduler()
+# create scheduler (deafult BackgroundScheduler as daemon)
+sched = BackgroundScheduler(daemon=True)
 
 def run_query_and_persist_sensor_values() -> None:
     query_and_persist_sensor_values()
@@ -51,10 +52,20 @@ def job_state_listener(event) -> None:
 ### job scheduler ###
 #####################
 
-if __name__ == '__main__':
-    print('water system script is running...')
+def set_up_sched_jobs():
     sched.add_job(run_query_and_persist_sensor_values, 'interval', minutes=QUERY_SENSOR_VALUES_INTERVAL_MIN, id='query_and_persist_sensor_values')
     sched.add_job(run_water_system, 'interval', minutes=RUN_WATER_SYSTEM_INTERVAL_MIN, id='water_check')
     sched.add_job(run_plant_db_clean_up, 'interval', weeks=RUN_PLANT_DB_CLEAN_UP_INTERVAL_WEEKS, id='run_plant_db_clean_up')
     sched.add_listener(job_state_listener, EVENT_JOB_ERROR | EVENT_JOB_MISSED)
+
+def start_water_system_daemon():
+    set_up_sched_jobs()
+    print('water system script (deamon) is running...')
+    sched.start() # run scheduler as deamon (default)
+
+if __name__ == '__main__':
+    print('started water system as blocking scheduler in main thread...')
+    sched = BlockingScheduler() # must run as blocking scheduler if water system runner is running as main program
+    set_up_sched_jobs()
+    print('water system script is running...')
     sched.start()

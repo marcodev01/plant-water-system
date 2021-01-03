@@ -12,7 +12,7 @@ from datetime import date
 from src.model.plant_configuration import PlantConfiguration
 from src.model.app_type import AppType
 from src.db.db_adapter import DbAdapter
-from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system
+from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system, start_water_system_daemon
 
 # setup uvicorn loggers
 setup_logger('uvicorn.error', '../log/api.log')
@@ -25,7 +25,10 @@ sensor_history = plant_db.table('sensor_history')
 master_data_db = DbAdapter().master_data_db
 plants_configuration = master_data_db.table('plants_configuration')
 
+# start api
 app = FastAPI()
+# start water system demaon directly from same thread as api to ensure access to apscheduler environment 
+start_water_system_daemon()
 
 
 @app.get("/app/state", tags=["app"])
