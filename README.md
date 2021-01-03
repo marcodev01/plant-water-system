@@ -13,13 +13,15 @@ The water system runner is a simple Python 3.7 application running two parallel 
 
 The first job is reading and persisting values from various sensors with a **time stamp** into a [tinyDB](https://tinydb.readthedocs.io/en/stable/) table named *sensor_history*. _Note: For certain sensor values it converts and round them to legbible units_. 
 
-The second job is reading the most recent data entry (by time stamp) from table *sensor_history* and compares them with the defined threshold values. For plants that fall below this threshold value the water pump is started. The threshold values are defined in a table named *plants_configuration* among other configurations for sensor channels, relay pins and watering duration/iteration.
+The second job is reading the most recent data entry (by time stamp) from table *sensor_history* and compares them with the defined threshold values. For plants that fall below this threshold value the water pump is started. The threshold values are defined in a table named *plants_configuration* among other configurations for sensor channels, relay pins and watering duration/iteration etc.
+
+A third job is cleaning up the *sensor_history* database from old values. The max age of *sensor_history* values can be configured in a table named *jobs_configuration*. 
 
 All actions, warnings and errors are [logged](https://docs.python.org/3/library/logging.html) in *water_system.log* 
 
 ## API
 An interface for the Chilli Plant Water System REST-API is implemented with [FastAPI](https://fastapi.tiangolo.com/). 
-It provides Endpoints to manage plant configurtions, read logs, start/pause the water system... See API documentation: http://{URI}/docs.
+It provides Endpoints to manage plant configurtions, read logs, start/pause the water system etc. See full API documentation: http://{API_URI}/docs.
 
 The API is operated on a ASGI server by [uvicorn](https://www.uvicorn.org/)
 
