@@ -92,7 +92,7 @@ def run_water_check() -> None:
         has_low_moisture_level = __is_moisture_level_low(plant, plant_master_data_obj)
         has_low_conductivity_level = __is_conductivity_level_low(plant, plant_master_data_obj)
 
-        if plant_master_data is not None and (has_low_moisture_level or has_low_conductivity_level):
+        if plant_master_data is not None and plant_master_data_obj.activated and (has_low_moisture_level or has_low_conductivity_level):
             if has_low_moisture_level:
                 logger.info(f'[-WATERING-] Running water pump ({plant_master_data_obj.relay_pin}) for {plant_master_data_obj.plant}. Moisture: {plant.moisture} % (min: {plant_master_data_obj.min_moisture})')
             if has_low_conductivity_level:

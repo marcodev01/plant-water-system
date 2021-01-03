@@ -11,6 +11,7 @@ class PlantConfiguration(BaseModel):
     sensor_channel: Optional[int] = None
     plant: str
     relay_pin: int
+    activated: bool
     water_duration_sec: int
     water_iterations: int
     max_moisture: int
