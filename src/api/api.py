@@ -3,12 +3,11 @@ from src.model.water_system_state import WaterSystemState
 from src.log.logger import setup_logger
 from src.model.plant_entry import PlantSensorEntry
 import uuid 
-from uuid import UUID
 from typing import List, Optional
 
 from fastapi import FastAPI, Query as FastAPIQuery, Path, Body, status, Response, HTTPException
 from tinydb.queries import where, Query
-from datetime import date
+from datetime import date, datetime
 from src.model.plant_configuration import PlantConfiguration
 from src.model.app_type import AppType
 from src.db.db_adapter import DbAdapter
@@ -107,7 +106,7 @@ def pause_or_resume_water_system(response: Response, state: bool = FastAPIQuery(
 
      
 
-@app.get("/plants/configuration", response_model=List[PlantConfiguration], tags=["plants configuration"])
+@app.get("/plants/configuration", response_model=List[PlantConfiguration], response_model_exclude_unset=True, tags=["plants configuration"])
 def get_all_plants_configurations():
     """ Get all plants configurations as list """
     return plants_configuration.all()
@@ -115,15 +114,15 @@ def get_all_plants_configurations():
 
 @app.put("/plants/configuration/{plant_id}", tags=["plants configuration"])
 def update_plant_configuration(
-    plant_id: UUID = Path(..., title="ID of plant to change configuration"), 
-    plant_conf: PlantConfiguration = Body(..., title="updated plant configuration", example={"id": "abc123", "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })
+    plant_id: str = Path(..., title="ID of plant to change configuration"), 
+    plant_conf: PlantConfiguration = Body(..., title="updated plant configuration", example={"id": "abc123", "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "activated": False, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })
 ):
     """ Updates an existing plant configuration"""
     plants_configuration.update(plant_conf.dict(exclude_none=True), where('id') == plant_id) # TODO: handle if requested plant not available
 
 
-@app.post("/plants/configuration", response_model=PlantConfiguration, status_code=status.HTTP_201_CREATED, tags=["plants configuration"])
-def add_plant_configuration(plant_conf: PlantConfiguration = Body(..., title="new plant configuration", example={"sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })):
+@app.post("/plants/configuration", response_model=PlantConfiguration, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED, tags=["plants configuration"])
+def add_plant_configuration(plant_conf: PlantConfiguration = Body(..., title="new plant configuration", example={"sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "activated": False, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })):
     """ 
     Add a new plant configuration
 
@@ -135,15 +134,15 @@ def add_plant_configuration(plant_conf: PlantConfiguration = Body(..., title="ne
 
 
 @app.delete("/plants/configuration/{plant_id}", tags=["plants configuration"])
-def delete_plant_configuration(plant_id: UUID = Path(..., title="ID of plant configuration to delete")):
+def delete_plant_configuration(plant_id: str = Path(..., title="ID of plant configuration to delete")):
     """ Delete an existing plant configuration """
     plants_configuration.remove(where('id') == plant_id) # TODO: handle if requested plant not available
 
 
-@app.get("/plants/history", response_model=List[PlantSensorEntry], tags=["plants history"])
+@app.get("/plants/history", response_model=List[PlantSensorEntry], response_model_exclude_unset=True, tags=["plants history"])
 def get_plant_history(
-    range_start_date: Optional[str] = FastAPIQuery(None, description="Note: start date is assumed to be in ISO format (YYYY-MM-DD)",regex="^([0-9]{4})(-)(1[0-2]|0[1-9])\2(3[01]|0[1-9]|[12][0-9])$"),
-    range_end_date: Optional[str]= FastAPIQuery(None, description="Note: end date is assumed to be in ISO format (YYYY-MM-DD)", regex="^([0-9]{4})(-)(1[0-2]|0[1-9])\2(3[01]|0[1-9]|[12][0-9])$")
+    range_start_date: Optional[str] = FastAPIQuery(None, description="Note: start date is assumed to be in ISO format (YYYY-MM-DD)",regex="^([0-9]{4})(-)(1[0-2]|0[1-9])\\2(3[01]|0[1-9]|[12][0-9])$"),
+    range_end_date: Optional[str]= FastAPIQuery(None, description="Note: end date is assumed to be in ISO format (YYYY-MM-DD)", regex="^([0-9]{4})(-)(1[0-2]|0[1-9])\\2(3[01]|0[1-9]|[12][0-9])$")
 ):
     """ 
     Get entries of plant sensor history db.
@@ -156,13 +155,13 @@ def get_plant_history(
     """
     history_entry = Query()
     if range_start_date and range_end_date:
-        sensor_history.search(history_entry.ts.test(test_history_range, range_start_date, range_end_date))
+        return sensor_history.search(history_entry.ts.test(test_history_range, range_start_date, range_end_date))
     elif range_start_date:
-        sensor_history.search(history_entry.ts.test(test_history_range_start, range_start_date))
+        return sensor_history.search(history_entry.ts.test(test_history_range_start, range_start_date))
     elif range_end_date:
-        sensor_history.search(history_entry.ts.test(test_history_range_end, range_end_date))
+        return sensor_history.search(history_entry.ts.test(test_history_range_end, range_end_date))
     else:
-        sensor_history.all()
+        return sensor_history.all()
 
 
 
@@ -171,13 +170,13 @@ def get_plant_history(
 ####################
 
 def test_history_range(val: str, start: str, end: str) -> bool:
-    return date.fromisoformat(val) > date.fromisoformat(start) and date.fromisoformat(val) < date.fromisoformat(end)
+    return datetime.fromisoformat(val).date() > date.fromisoformat(start) and datetime.fromisoformat(val).date() < date.fromisoformat(end)
 
 def test_history_range_start(val: str, start: str) -> bool:
-    return date.fromisoformat(val) > date.fromisoformat(start)
+    return datetime.fromisoformat(val).date() > date.fromisoformat(start)
 
 def test_history_range_end(val: str, end: str) -> bool:
-    return date.fromisoformat(val) < date.fromisoformat(end)
+    return datetime.fromisoformat(val).date() < date.fromisoformat(end)
 
 def get_log_fragment(nmb_lines: int, log_file_path: str) -> str:
     log_fragment = ''
