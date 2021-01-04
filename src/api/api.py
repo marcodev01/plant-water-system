@@ -49,11 +49,11 @@ def api_status(
     """
     if app_type is AppType.water_app:
         water_system_state = get_state_of_water_system()
-        if (water_system_state is WaterSystemState.STATE_STOPPED.value):
+        if (water_system_state is WaterSystemState.STATE_STOPPED):
             return {"app": app_type ,"state": WaterSystemState.STATE_STOPPED.name}
-        elif (water_system_state is WaterSystemState.STATE_RUNNING.value):
+        elif (water_system_state is WaterSystemState.STATE_RUNNING):
             return {"app": app_type ,"state": WaterSystemState.STATE_RUNNING.name}
-        elif (water_system_state is WaterSystemState.STATE_PAUSED.value):
+        elif (water_system_state is WaterSystemState.STATE_PAUSED):
             return {"app": app_type ,"state": WaterSystemState.STATE_PAUSED.name}
         else:
             return {"app": app_type ,"state": "UNKNOW_STATE"}
@@ -86,20 +86,20 @@ def pause_or_resume_water_system(response: Response, state: bool = FastAPIQuery(
     """
     water_system_state = get_state_of_water_system()
     if state: # resume water system
-        if water_system_state is WaterSystemState.STATE_PAUSED.value:
+        if water_system_state is WaterSystemState.STATE_PAUSED:
             resume_water_system()
             response.status_code = status.HTTP_200_OK
         else:
-            if water_system_state is WaterSystemState.STATE_RUNNING.value:
+            if water_system_state is WaterSystemState.STATE_RUNNING:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system already running..")
             else:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is in an unexpected state..")
     if not state: # pause water system
-        if water_system_state is WaterSystemState.STATE_RUNNING.value:
+        if water_system_state is WaterSystemState.STATE_RUNNING:
             pause_water_system()
             response.status_code = status.HTTP_200_OK
         else:
-            if water_system_state is WaterSystemState.STATE_PAUSED.value:
+            if water_system_state is WaterSystemState.STATE_PAUSED:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system already paused..")
             else:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is in an unexpected state..")
@@ -118,7 +118,11 @@ def update_plant_configuration(
     plant_conf: PlantConfiguration = Body(..., title="updated plant configuration", example={"id": "abc123", "sensor_type": "moisture_capacitve", "sensor_channel": 2, "plant": "My Plant", "relay_pin": 5, "activated": False, "water_duration_sec": 3, "water_iterations": 1, "max_moisture": 90, "min_moisture": 42 })
 ):
     """ Updates an existing plant configuration"""
-    plants_configuration.update(plant_conf.dict(exclude_none=True), where('id') == plant_id) # TODO: handle if requested plant not available
+    if (plant_conf.id is not None and plant_id != plant_conf.id):
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Forbidden to change id")
+    plants_update_ids = plants_configuration.update(plant_conf.dict(exclude_none=True), where('id') == plant_id)
+    if (len(plants_update_ids) == 0):
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Not plant found for updating")
 
 
 @app.post("/plants/configuration", response_model=PlantConfiguration, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED, tags=["plants configuration"])
@@ -136,7 +140,9 @@ def add_plant_configuration(plant_conf: PlantConfiguration = Body(..., title="ne
 @app.delete("/plants/configuration/{plant_id}", tags=["plants configuration"])
 def delete_plant_configuration(plant_id: str = Path(..., title="ID of plant configuration to delete")):
     """ Delete an existing plant configuration """
-    plants_configuration.remove(where('id') == plant_id) # TODO: handle if requested plant not available
+    plants_delete_ids = plants_configuration.remove(where('id') == plant_id)
+    if (len(plants_delete_ids) == 0):
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Not plant found for deleting")
 
 
 @app.get("/plants/history", response_model=List[PlantSensorEntry], response_model_exclude_unset=True, tags=["plants history"])

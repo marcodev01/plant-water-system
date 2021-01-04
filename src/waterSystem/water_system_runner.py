@@ -32,7 +32,7 @@ def run_plant_db_clean_up() -> None:
 
 
 def get_state_of_water_system() -> WaterSystemState:
-    return sched.state
+    return WaterSystemState(sched.state)
 
 def pause_water_system() -> None:
     sched.pause()

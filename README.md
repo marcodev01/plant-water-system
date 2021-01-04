@@ -9,7 +9,7 @@ Application Architecture:
 * Plant Water Admin APP (Progressive Web App) **TODO**
 
 ## Water System Runner
-The water system runner is a simple Python 3.7 application running two parallel jobs scheduled with the Python library [Advanced Python Scheduler](https://apscheduler.readthedocs.io/en/stable/).
+The water system runner is a simple Python 3.7 application running several jobs scheduled with the Python library [Advanced Python Scheduler](https://apscheduler.readthedocs.io/en/stable/).
 
 The first job is reading and persisting values from various sensors with a **time stamp** into a [tinyDB](https://tinydb.readthedocs.io/en/stable/) table named *sensor_history*. _Note: For certain sensor values it converts and round them to legbible units_. 
 
@@ -27,7 +27,7 @@ The API is operated on a ASGI server by [uvicorn](https://www.uvicorn.org/)
 
 All actions, api accesses and errors are [logged](https://docs.python.org/3/library/logging.html) in *api.log* 
 
-### Libraries
+## Dependent Libraries
  * Groove Py: https://github.com/Seeed-Studio/grove.py
  * temp & humidity sensor: https://github.com/Seeed-Studio/Seeed_Python_DHT
  * sunlight sensor: https://github.com/Seeed-Studio/Seeed_Python_SI114X
@@ -38,7 +38,14 @@ All actions, api accesses and errors are [logged](https://docs.python.org/3/libr
  * dateTime: https://docs.python.org/3/library/datetime.html
  * FastAPI: https://fastapi.tiangolo.com/
 
-# Setup dev environment
-Allow sibling packages in python with virtual environment: [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
+# Dev environment
+## Setup dev environment
+1. Allow sibling packages in python with virtual environment (venv): [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
+2. Install all depenet libraries in venv (except for native python libraries) 
 
-Start API server in dev environment: ```uvicorn api:app --reload```
+## Run in dev environment
+1. Activate venv: ```source ~/Projects/plantWaterSystem/venv/bin/activate```
+2. Start API server with water system in dev environment: ```uvicorn api:app --reload```
+
+## Run in prod environment
+Use bash script ```start_water_system_main.sh``` for running **water system as standalone** or ```start_water_system_with_api.sh``` for running **water system with api**.
