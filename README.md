@@ -43,9 +43,9 @@ All actions, api accesses and errors are [logged](https://docs.python.org/3/libr
 1. Allow sibling packages in python with virtual environment (venv): [stack overflow thread](https://stackoverflow.com/questions/6323860/sibling-package-imports/50193944#50193944)
 2. Install all depenet libraries in venv (except for native python libraries) 
 
-## Run in dev environment
+### Run in dev environment
 1. Activate venv: ```source ~/Projects/plantWaterSystem/venv/bin/activate```
 2. Start API server with water system in dev environment: ```uvicorn api:app --reload```
 
-## Run in prod environment
+### Run in prod environment
 Use bash script ```start_water_system_main.sh``` for running **water system as standalone** or ```start_water_system_with_api.sh``` for running **water system with api**.
