@@ -39,6 +39,9 @@ def pause_water_system() -> None:
 
 def resume_water_system() -> None:
     sched.resume()
+
+def shutdown_water_system() -> None:
+    sched.shutdown()
     
 
 def job_state_listener(event) -> None:

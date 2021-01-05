@@ -11,7 +11,7 @@ from datetime import date, datetime
 from src.model.plant_configuration import PlantConfiguration
 from src.model.app_type import AppType
 from src.db.db_adapter import DbAdapter
-from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system, start_water_system_daemon
+from src.waterSystem.water_system_runner import get_state_of_water_system, resume_water_system, pause_water_system, start_water_system_daemon, shutdown_water_system
 
 # setup uvicorn loggers
 setup_logger('uvicorn.error', '../log/api.log')
@@ -26,8 +26,15 @@ plants_configuration = master_data_db.table('plants_configuration')
 
 # start api
 app = FastAPI()
-# start water system demaon directly from same thread as api to ensure access to apscheduler environment 
-start_water_system_daemon()
+
+@app.on_event("startup")
+def startup():
+    # start water system demaon directly from same thread as api to ensure access to apscheduler environment 
+    start_water_system_daemon()
+
+@app.on_event("shutdown")
+def shutdown():
+    shutdown_water_system()
 
 
 @app.get("/app/state", tags=["app"])
@@ -122,7 +129,7 @@ def update_plant_configuration(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Forbidden to change id")
     plants_update_ids = plants_configuration.update(plant_conf.dict(exclude_none=True), where('id') == plant_id)
     if (len(plants_update_ids) == 0):
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Not plant found for updating")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="No plant found for updating")
 
 
 @app.post("/plants/configuration", response_model=PlantConfiguration, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED, tags=["plants configuration"])
