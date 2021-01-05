@@ -98,7 +98,7 @@ def pause_or_resume_water_system(response: Response, state: bool = FastAPIQuery(
             response.status_code = status.HTTP_200_OK
         else:
             if water_system_state is WaterSystemState.STATE_RUNNING:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system already running..")
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is already running..")
             else:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is in an unexpected state..")
     if not state: # pause water system
@@ -107,7 +107,7 @@ def pause_or_resume_water_system(response: Response, state: bool = FastAPIQuery(
             response.status_code = status.HTTP_200_OK
         else:
             if water_system_state is WaterSystemState.STATE_PAUSED:
-                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system already paused..")
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is already paused..")
             else:
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR , detail="Water system is in an unexpected state..")
 
