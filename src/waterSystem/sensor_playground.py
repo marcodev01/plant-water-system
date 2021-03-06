@@ -4,6 +4,7 @@ from src.waterSystem.components import TemperatureHumiditySensor, TempHumSensorT
 from src.waterSystem.components import MoistureSensor, MoistureSensorType
 from src.waterSystem.components import MifloraSensor
 from src.waterSystem.components import SunlightSensor
+from src.waterSystem.components import UltrasonicRanger
 
 
 relay = Relay(pin=5)
@@ -14,13 +15,14 @@ temparature_humidity_sensor = TemperatureHumiditySensor(channel=16, sensor_type=
 moister_standard_sensor = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)
 moisture_capacitive_sensor = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
 sunlight_sensor = SunlightSensor()
+ultra_sonic_ranger = UltrasonicRanger(pin=18)
 
 
 def run_standard_relay():
     try:
         while True:
             relay.on()
-            time.sleep(2.5)
+            time.sleep(4)
             relay.off()
             time.sleep(2)
     except:
@@ -81,6 +83,13 @@ def run_sunlight_sensor():
         print('\r', end='')
         time.sleep(1)
 
+def run_ultra_sonic_ranger():
+    while True:
+        print(f'Distance: {ultra_sonic_ranger.get_distance()} cm')
+        print(f'Converted distance: {ultra_sonic_ranger.convert_distance_to_water_level()} %')
+        time.sleep(1)
+
+
 
 #############################
 # run sensor by comment out #
@@ -98,3 +107,5 @@ def run_sunlight_sensor():
 # run_miflora_sensor()
 
 # run_sunlight_sensor()
+
+# run_ultra_sonic_ranger()

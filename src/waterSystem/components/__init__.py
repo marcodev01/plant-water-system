@@ -3,6 +3,7 @@ from .moister_sensor import MoistureSensor, MoistureSensorType
 from .temperature_humidity_sensor import TemperatureHumiditySensor, TempHumSensorType
 from .miflora_sensor import MifloraSensor
 from .sunlight_sensor import SunlightSensor
+from .ultra_sonic_ranger import UltrasonicRanger
 
 __all__ = [
     "Relay",
@@ -11,5 +12,6 @@ __all__ = [
     "TemperatureHumiditySensor",
     "TempHumSensorType",
     "MifloraSensor",
-    "SunlightSensor"
+    "SunlightSensor",
+    "UltrasonicRanger"
 ]
