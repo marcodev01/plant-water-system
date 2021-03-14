@@ -68,7 +68,7 @@ class UltrasonicRanger(object):
         if distance is None:
             return -1
 
-        absolute_distance_cm = self.get_distance() - _MIN_WATER_LEVEL_CM
+        absolute_distance_cm = distance - _MIN_WATER_LEVEL_CM
         distance_percentage = (absolute_distance_cm * 100) / _MAX_WATER_LEVEL_CM
         water_level_percentage =  100 - distance_percentage
         return round(water_level_percentage, 1)

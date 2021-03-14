@@ -12,8 +12,8 @@ relay_channel_1 = Relay(pin=22)
 relay_channel_2 = Relay(pin=23)
 
 temparature_humidity_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
-moister_standard_sensor = MoistureSensor(channel=0, sensor_type=MoistureSensorType.STANDARD.value)
-moisture_capacitive_sensor = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
+moisture_capacitive_sensor_1 = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
+moisture_capacitive_sensor_2 = MoistureSensor(channel=0, sensor_type=MoistureSensorType.CAPACITIVE.value)
 sunlight_sensor = SunlightSensor()
 ultra_sonic_ranger = UltrasonicRanger(pin=18)
 
@@ -52,17 +52,17 @@ def run_temp_hum_pro_sensor():
         time.sleep(3)
 
 
-def run_moisture_standard_sensor():
+def run_moisture_capacitive_sensor_1():
     while True:
-        print("Moisture type: ", moister_standard_sensor.sensor_type)
-        print("Moisture value %: ", moister_standard_sensor.read_moisture())
+        print("Moisture type: ", moisture_capacitive_sensor_1.sensor_type)
+        print("Moisture value %: ", moisture_capacitive_sensor_1.read_moisture())
         time.sleep(1)
 
 
-def run_moisture_capacitive_sensor():
+def run_moisture_capacitive_sensor_2():
     while True:
-        print("Moisture type: ", moisture_capacitive_sensor.sensor_type)
-        print("Moisture value %: ", moisture_capacitive_sensor.read_moisture())
+        print("Moisture type: ", moisture_capacitive_sensor_2.sensor_type)
+        print("Moisture value %: ", moisture_capacitive_sensor_2.read_moisture())
         time.sleep(1)
 
 
@@ -86,7 +86,7 @@ def run_sunlight_sensor():
 def run_ultra_sonic_ranger():
     while True:
         print(f'Distance: {ultra_sonic_ranger.get_distance()} cm')
-        print(f'Converted distance: {ultra_sonic_ranger.convert_distance_to_water_level()} %')
+        # print(f'Converted distance: {ultra_sonic_ranger.convert_distance_to_water_level()} %')
         time.sleep(1)
 
 
@@ -101,11 +101,11 @@ def run_ultra_sonic_ranger():
 
 # run_temp_hum_pro_sensor()
 
-# run_moisture_standard_sensor()
-# run_moisture_capacitive_sensor()
+# run_moisture_capacitive_sensor_1()
+# run_moisture_capacitive_sensor_2()
 
 # run_miflora_sensor()
 
 # run_sunlight_sensor()
 
-# run_ultra_sonic_ranger()
+run_ultra_sonic_ranger()
