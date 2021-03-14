@@ -36,7 +36,6 @@ def query_and_persist_sensor_values() -> None:
 
     temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
     sunlight_sensor = SunlightSensor()
-    ultra_sonic_ranger = UltrasonicRanger(pin=18)
     
     plant_sensor_entry_obj = PlantSensorEntry(
         ts=datetime.now().isoformat(timespec='seconds'),
@@ -45,8 +44,7 @@ def query_and_persist_sensor_values() -> None:
         humidity=temp_sensor.read_humidity(),
         visible_light=sunlight_sensor.readVisible(),
         UV_index=sunlight_sensor.readUV(),
-        IR_light=sunlight_sensor.readIR(),
-        water_level=ultra_sonic_ranger.convert_distance_to_water_level()
+        IR_light=sunlight_sensor.readIR()
     )
 
     # query and save values with time stamp to db

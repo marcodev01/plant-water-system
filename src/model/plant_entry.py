@@ -23,5 +23,4 @@ class PlantSensorEntry(BaseModel):
     visible_light: int
     UV_index: float
     IR_light: int
-    water_level: float
 

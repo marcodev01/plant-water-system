@@ -86,7 +86,7 @@ def run_sunlight_sensor():
 def run_ultra_sonic_ranger():
     while True:
         print(f'Distance: {ultra_sonic_ranger.get_distance()} cm')
-        # print(f'Converted distance: {ultra_sonic_ranger.convert_distance_to_water_level()} %')
+        print(f'Converted distance: {ultra_sonic_ranger.convert_distance_to_water_level()} %')
         time.sleep(1)
 
 
@@ -108,4 +108,4 @@ def run_ultra_sonic_ranger():
 
 # run_sunlight_sensor()
 
-run_ultra_sonic_ranger()
+# run_ultra_sonic_ranger()

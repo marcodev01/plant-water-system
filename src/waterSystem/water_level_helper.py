@@ -111,7 +111,7 @@ def run_water_pump(pin: int, pump_duration_sec: float, number_of_runs: int) -> N
     relay = Relay(pin)
 
     for _ in range(number_of_runs):
-        time.sleep(1) # default timeout per iteration
+        time.sleep(0.5) # default timeout per iteration
         relay.on()
         time.sleep(pump_duration_sec)
         relay.off()
