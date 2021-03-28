@@ -34,7 +34,7 @@ def query_and_persist_sensor_values() -> None:
     plant_db = DbAdapter().plant_db
     sensor_history_db = plant_db.table(SENSOR_HISTORY_TABLE_NAME)
 
-    temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
+    temp_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.STANDARD.value)
     sunlight_sensor = SunlightSensor()
     
     plant_sensor_entry_obj = PlantSensorEntry(

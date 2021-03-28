@@ -11,7 +11,7 @@ relay = Relay(pin=5)
 relay_channel_1 = Relay(pin=22)
 relay_channel_2 = Relay(pin=23)
 
-temparature_humidity_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.PRO.value)
+temparature_humidity_sensor = TemperatureHumiditySensor(channel=16, sensor_type=TempHumSensorType.STANDARD.value)
 moisture_capacitive_sensor_1 = MoistureSensor(channel=2, sensor_type=MoistureSensorType.CAPACITIVE.value)
 moisture_capacitive_sensor_2 = MoistureSensor(channel=0, sensor_type=MoistureSensorType.CAPACITIVE.value)
 sunlight_sensor = SunlightSensor()
@@ -45,7 +45,7 @@ def run_two_channel_relay():
         relay_channel_2.off()
 
 
-def run_temp_hum_pro_sensor():
+def run_temp_hum_standard_sensor():
     while True:
         print("Temperature °C: ", temparature_humidity_sensor.read_temperature())
         print("Humidity %: ", temparature_humidity_sensor.read_humidity())
@@ -99,7 +99,7 @@ def run_ultra_sonic_ranger():
 # run_standard_relay()
 # run_two_channel_relay()
 
-# run_temp_hum_pro_sensor()
+# run_temp_hum_standard_sensor()
 
 # run_moisture_capacitive_sensor_1()
 # run_moisture_capacitive_sensor_2()

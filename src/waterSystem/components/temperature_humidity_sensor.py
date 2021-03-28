@@ -25,12 +25,12 @@ class TemperatureHumiditySensor:
     def read_temperature(self):
         """Read temperature in degrees [Celsuis]"""
         temp = self.dht_sensor.read()[1]
-        return round(temp, 1)
+        return temp
 
     def read_humidity(self):
         """Read humidity in %"""
         humi = self.dht_sensor.read()[0]
-        return round(humi, 1)
+        return humi
 
 
 class TempHumSensorType(enum.Enum):
