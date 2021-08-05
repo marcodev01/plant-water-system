@@ -100,6 +100,23 @@ def run_water_check() -> None:
             run_water_pump(plant_master_data_obj.relay_pin, plant_master_data_obj.water_duration_sec, plant_master_data_obj.water_iterations)
             
 
+def run_water_chron() -> None:
+    """ 
+    Run manually watering for all configured and activated plants
+    Notes: this function ignores the current water level of the plants
+    """
+
+    master_data_db = DbAdapter().master_data_db
+    plants_master_data_db = master_data_db.table(PLANTS_CONFIGURATION_TABLE_NAME)
+
+    for plant_conf in plants_master_data_db:
+        # parse plant_conf Document to object
+        plant_configuration_obj = PlantConfiguration.parse_obj(plant_conf)
+        
+        if (plant_configuration_obj.activated):
+            logger.info(f'[-WATERING-] Running water pump ({plant_configuration_obj.relay_pin}) for {plant_configuration_obj.plant}.')
+            run_water_pump(plant_configuration_obj.relay_pin, plant_configuration_obj.water_duration_sec, plant_configuration_obj.water_iterations)
+
 
 ######################################
 # helper functions to run water pump #

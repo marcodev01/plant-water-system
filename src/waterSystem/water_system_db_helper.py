@@ -15,7 +15,6 @@ from src.waterSystem.components import TemperatureHumiditySensor, TempHumSensorT
 from src.waterSystem.components import MoistureSensor
 from src.waterSystem.components import MifloraSensor
 from src.waterSystem.components import SunlightSensor
-from src.waterSystem.components import UltrasonicRanger
 
 logger = logging.getLogger('water.system')
 
