@@ -6,6 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
 from src.waterSystem.water_level_helper import run_water_check, run_water_chron
 from src.waterSystem.water_system_db_helper import query_and_persist_sensor_values, clean_up_plant_history
+from src.waterSystem.components.camera import take_picture
 
 from src.log.logger import setup_logger
 
@@ -30,6 +31,9 @@ def run_water_system() -> None:
 
 def run_water_system_chron() -> None:
     run_water_chron()
+
+def pi_camera_take_picture() -> None:
+    take_picture()
 
 def run_plant_db_clean_up() -> None:
     clean_up_plant_history()
@@ -62,8 +66,9 @@ def job_state_listener(event) -> None:
 def set_up_sched_jobs(chron: bool):
     sched.add_job(run_query_and_persist_sensor_values, 'interval', minutes=QUERY_SENSOR_VALUES_INTERVAL_MIN, id='query_and_persist_sensor_values')
 
-    if chron == True:
+    if chron == True: # TODO: Refactor
         sched.add_job(run_water_system_chron, 'interval', hours=RUN_WATER_CHRON_INTERVAL_HOURS, id='water_chron')
+        sched.add_job(pi_camera_take_picture, 'interval', hours=12, id='take_picture')
     else:
         sched.add_job(run_water_system, 'interval', minutes=RUN_WATER_SYSTEM_INTERVAL_MIN, id='water_check')
 

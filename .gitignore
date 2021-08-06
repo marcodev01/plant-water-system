@@ -4,5 +4,6 @@
 *.log
 pyrightconfig.json
 src/db/*.json
+src/db/pictures/*.jpg
 venv
 src.egg-info
