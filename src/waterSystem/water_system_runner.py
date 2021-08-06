@@ -16,7 +16,7 @@ setup_logger('apscheduler', '../log/water_system.log')
 
 QUERY_SENSOR_VALUES_INTERVAL_MIN = 42
 RUN_WATER_SYSTEM_INTERVAL_MIN = 60
-RUN_WATER_CHRON_INTERVAL_HOURS = 26
+RUN_WATER_CHRON_INTERVAL_HOURS = 27
 RUN_PLANT_DB_CLEAN_UP_INTERVAL_WEEKS = 2
 
 # create scheduler (deafult BackgroundScheduler as daemon)
